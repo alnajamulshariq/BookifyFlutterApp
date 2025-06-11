@@ -1,3 +1,5 @@
+import 'package:bookify/screens/auth/users/forgetpass.dart';
+import 'package:bookify/screens/auth/users/sign_up.dart';
 import 'package:bookify/utils/themes/custom_themes/elevated_button_theme.dart';
 import 'package:bookify/utils/themes/custom_themes/outlined_button_theme.dart';
 import 'package:bookify/utils/themes/custom_themes/text_theme.dart';
@@ -20,7 +22,8 @@ class _SignInState extends State<SignIn> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.primary, // Your top background (dark)
+      resizeToAvoidBottomInset: true,
+      backgroundColor: MyColors.primary,
       body: Stack(
         children: [
           Positioned(
@@ -28,7 +31,7 @@ class _SignInState extends State<SignIn> {
             left: 0,
             right: 0,
             child: Image.asset(
-              'assets/images/appLogo.png',
+              'assets/images/appLogo2.png',
               height: 200,
               fit: BoxFit.contain,
             ),
@@ -41,254 +44,249 @@ class _SignInState extends State<SignIn> {
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: MyColors.bg, // 👈 light background for form
+                color: MyColors.bg,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(34),
                   topRight: Radius.circular(34),
                 ),
               ),
-              child: Form(
-                key: formKey,
-                child: Column(
-                  children: [
-                    const SizedBox(height: 10),
+              child: SingleChildScrollView(
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const SizedBox(height: 10),
 
-                    /// Email
-                    TextFormField(
-                      controller: emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      style: const TextStyle(
-                        color: Colors.black,
-                      ), // 👈 force black text
-                      decoration: InputDecoration(
-                        labelText: 'Email',
-                        hintText: 'Enter your email',
-                        labelStyle: const TextStyle(color: Colors.black),
-                        hintStyle: const TextStyle(color: Colors.grey),
-                        prefixIcon: const Icon(Icons.email, color: Colors.grey),
-                        filled: true,
-                        fillColor: Colors.white, // 👈 field white
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(
-                            color: MyColors.primary,
-                            width: 1,
-                          ),
+                      // Email Field
+                      TextFormField(
+                        controller: emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        style: const TextStyle(color: Colors.black),
+                        decoration: _inputDecoration(
+                          label: 'Email',
+                          hint: 'Enter your email',
+                          icon: Icons.email,
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(
-                            color: MyColors.primary,
-                            width: 2,
-                          ),
-                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty)
+                            return "Email is required";
+                          final emailRegex = RegExp(
+                            r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$",
+                          );
+                          if (!emailRegex.hasMatch(value))
+                            return "Enter a valid email address";
+                          return null;
+                        },
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Email is required";
-                        }
-                        final emailRegex = RegExp(
-                          r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$",
-                        );
-                        if (!emailRegex.hasMatch(value)) {
-                          return "Enter a valid email address";
-                        }
-                        return null; // valid
-                      },
-                    ),
 
-                    const SizedBox(height: 20),
+                      const SizedBox(height: 20),
 
-                    /// Password
-                    TextFormField(
-                      controller: passController,
-                      obscureText: _obscurePassword,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      style: const TextStyle(
-                        color: Colors.black,
-                      ), // 👈 again force black text
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        hintText: 'Enter your password',
-                        labelStyle: const TextStyle(color: Colors.black),
-                        hintStyle: const TextStyle(color: Colors.grey),
-                        prefixIcon: const Icon(Icons.lock, color: Colors.grey),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _obscurePassword
-                                ? Icons.visibility_off
-                                : Icons.visibility,
-                            color: Colors.grey,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _obscurePassword = !_obscurePassword;
-                            });
-                          },
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(
-                            color: MyColors.primary,
-                            width: 1,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(
-                            color: MyColors.primary,
-                            width: 2,
-                          ),
-                        ),
+                      // Password Field
+                      TextFormField(
+                        controller: passController,
+                        obscureText: _obscurePassword,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        style: const TextStyle(color: Colors.black),
+                        decoration:
+                            _inputDecoration(
+                              label: 'Password',
+                              hint: 'Enter your password',
+                              icon: Icons.lock,
+                            ).copyWith(
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscurePassword
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                  color: Colors.grey,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscurePassword = !_obscurePassword;
+                                  });
+                                },
+                              ),
+                            ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty)
+                            return "Password is required";
+                          final passRegex = RegExp(
+                            r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$',
+                          );
+                          if (!passRegex.hasMatch(value)) {
+                            return "Password must be at least 8 chars (upper, lower, digit, special)";
+                          }
+                          return null;
+                        },
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Password is required";
-                        }
-                        final passRegex = RegExp(
-                          r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$',
-                        );
-                        if (!passRegex.hasMatch(value)) {
-                          return "Password must be at least 8 uper, lower, special character";
-                        }
-                        return null; // valid
-                      },
-                    ),
-                    SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        InkWell(
-                          // onTap: () => ForgetPass(),
-                          child: Text(
-                            "Forget Password",
-                            style: TextStyle(
-                              color: MyColors.primary,
-                              fontWeight: FontWeight.w600,
+
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          InkWell(
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const ForgetPass(),
+                              ),
+                            ),
+                            child: Text(
+                              "Forget Password",
+                              style: TextStyle(
+                                color: MyColors.primary,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
 
-                    const SizedBox(height: 20),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButtonTheme(
-                        data: MyElevatedButtonTheme.lightElevatedButtonTheme,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            if (formKey.currentState?.validate() ?? false) {
-                              // Handle login
-                            }
-                          },
-                          child: Text('Login'),
+                      const SizedBox(height: 20),
+
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButtonTheme(
+                          data: MyElevatedButtonTheme.lightElevatedButtonTheme,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (formKey.currentState?.validate() ?? false) {
+                                // Handle login
+                              }
+                            },
+                            child: const Text('Login'),
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 20),
 
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: Divider(
-                            color: Colors.grey,
-                            thickness: 1,
-                            endIndent: 10,
-                          ),
-                        ),
-                        Text(
-                          'Or continue with',
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                        Expanded(
-                          child: Divider(
-                            color: Colors.grey,
-                            thickness: 1,
-                            indent: 10,
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 25),
-
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButtonTheme(
-                        data: MyOutlinedButtonTheme.lightOutlinedButtonTheme,
-                        child: OutlinedButton(
-                          onPressed: () {
-                            if (formKey.currentState?.validate() ?? false) {
-                              // Handle Google login
-                            }
-                          },
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.all(18),
-                            side: const BorderSide(color: MyColors.primary),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
+                      const SizedBox(height: 20),
+                      Row(
+                        children: <Widget>[
+                          const Expanded(
+                            child: Divider(
+                              color: Colors.grey,
+                              thickness: 1,
+                              endIndent: 10,
                             ),
                           ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                height:
-                                    24, // Fixed box to prevent button height increase
-                                width: 24,
-                                child: Transform.scale(
-                                  scale:
-                                      1.7, // Visually increase image size only
-                                  child: Image.asset(
-                                    'assets/images/googleIcon.png',
-                                    fit: BoxFit.contain,
+                          const Text(
+                            'Or continue with',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                          const Expanded(
+                            child: Divider(
+                              color: Colors.grey,
+                              thickness: 1,
+                              indent: 10,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 25),
+
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButtonTheme(
+                          data: MyOutlinedButtonTheme.lightOutlinedButtonTheme,
+                          child: OutlinedButton(
+                            onPressed: () {
+                              // Google Login
+                            },
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.all(18),
+                              side: const BorderSide(color: MyColors.primary),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  height: 24,
+                                  width: 24,
+                                  child: Transform.scale(
+                                    scale: 1.7,
+                                    child: Image.asset(
+                                      'assets/images/googleIcon.png',
+                                      fit: BoxFit.contain,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 12),
-                              const Text(
-                                'Continue with Google',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
+                                const SizedBox(width: 12),
+                                const Text(
+                                  'Continue with Google',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 18,
+                                    letterSpacing: 0.7,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Don't have an account? ",
-                          style: MyTextTheme.lightTextTheme.bodySmall,
-                        ),
-                        InkWell(
-                          // onTap: () => SignUp(),
-                          child: Text(
-                            "Sign Up",
-                            style: TextStyle(
-                              color: MyColors.primary,
-                              fontWeight: FontWeight.bold,
+                              ],
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                  ],
+                      ),
+
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Don't have an account? ",
+                            style: MyTextTheme.lightTextTheme.bodySmall,
+                          ),
+                          InkWell(
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => const SignUp()),
+                            ),
+                            child: Text(
+                              "Sign Up",
+                              style: TextStyle(
+                                color: MyColors.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 20),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  InputDecoration _inputDecoration({
+    required String label,
+    required String hint,
+    required IconData icon,
+  }) {
+    return InputDecoration(
+      labelText: label,
+      hintText: hint,
+      labelStyle: const TextStyle(color: Colors.black),
+      hintStyle: const TextStyle(color: Colors.grey),
+      prefixIcon: Icon(icon, color: Colors.grey),
+      filled: true,
+      fillColor: Colors.white,
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(color: MyColors.primary, width: 1),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(color: MyColors.primary, width: 2),
       ),
     );
   }

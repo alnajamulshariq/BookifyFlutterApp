@@ -1,4 +1,4 @@
-import 'package:bookify/screens/auth/users/sign_in.dart';
+import 'package:bookify/screens/splashscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:bookify/utils/themes/themes.dart';
 
@@ -17,7 +17,7 @@ class FlutterApp extends StatelessWidget {
       themeMode: ThemeMode.system,
       theme: MyTheme.lightTheme,
       darkTheme: MyTheme.darkTheme,
-      home: const SignIn(),
+      home: SplashScreen(),
     );
   }
 }
