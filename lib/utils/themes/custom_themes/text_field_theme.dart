@@ -19,11 +19,11 @@ class MyTextFormFieldTheme {
       fontWeight: FontWeight.w500,
     ),
     enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(22),
       borderSide: const BorderSide(width: 1, color: MyColors.primary),
     ),
     focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(22),
       borderSide: const BorderSide(width: 2, color: MyColors.primary),
     ),
     errorBorder: OutlineInputBorder(

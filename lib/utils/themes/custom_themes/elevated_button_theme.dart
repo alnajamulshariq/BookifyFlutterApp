@@ -12,13 +12,13 @@ class MyElevatedButtonTheme {
       disabledForegroundColor: Colors.grey,
       disabledBackgroundColor: Colors.grey,
       side: const BorderSide(color: MyColors.primary),
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(19),
       textStyle: const TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w600,
         color: Colors.white,
       ),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(26)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
     ),
   );
 

@@ -1,3 +1,4 @@
+import 'package:bookify/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
 
 class MyOutlinedButtonTheme {
@@ -7,14 +8,14 @@ class MyOutlinedButtonTheme {
     style: OutlinedButton.styleFrom(
       elevation: 0,
       foregroundColor: Colors.black,
-      side: const BorderSide(color: Colors.blue),
+      side: const BorderSide(color: MyColors.primary),
       textStyle: const TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w600,
         color: Colors.black,
       ),
       padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
     ),
   );
 

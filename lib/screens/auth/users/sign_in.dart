@@ -1,4 +1,6 @@
 import 'package:bookify/utils/themes/custom_themes/elevated_button_theme.dart';
+import 'package:bookify/utils/themes/custom_themes/outlined_button_theme.dart';
+import 'package:bookify/utils/themes/custom_themes/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:bookify/utils/constants/colors.dart';
 
@@ -49,7 +51,7 @@ class _SignInState extends State<SignIn> {
                 key: formKey,
                 child: Column(
                   children: [
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 10),
 
                     /// Email
                     TextFormField(
@@ -82,9 +84,21 @@ class _SignInState extends State<SignIn> {
                           ),
                         ),
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Email is required";
+                        }
+                        final emailRegex = RegExp(
+                          r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$",
+                        );
+                        if (!emailRegex.hasMatch(value)) {
+                          return "Enter a valid email address";
+                        }
+                        return null; // valid
+                      },
                     ),
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 20),
 
                     /// Password
                     TextFormField(
@@ -130,9 +144,37 @@ class _SignInState extends State<SignIn> {
                           ),
                         ),
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Password is required";
+                        }
+                        final passRegex = RegExp(
+                          r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$',
+                        );
+                        if (!passRegex.hasMatch(value)) {
+                          return "Password must be at least 8 uper, lower, special character";
+                        }
+                        return null; // valid
+                      },
+                    ),
+                    SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        InkWell(
+                          // onTap: () => ForgetPass(),
+                          child: Text(
+                            "Forget Password",
+                            style: TextStyle(
+                              color: MyColors.primary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
 
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 20),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButtonTheme(
@@ -146,6 +188,100 @@ class _SignInState extends State<SignIn> {
                           child: Text('Login'),
                         ),
                       ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Divider(
+                            color: Colors.grey,
+                            thickness: 1,
+                            endIndent: 10,
+                          ),
+                        ),
+                        Text(
+                          'Or continue with',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                        Expanded(
+                          child: Divider(
+                            color: Colors.grey,
+                            thickness: 1,
+                            indent: 10,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 25),
+
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButtonTheme(
+                        data: MyOutlinedButtonTheme.lightOutlinedButtonTheme,
+                        child: OutlinedButton(
+                          onPressed: () {
+                            if (formKey.currentState?.validate() ?? false) {
+                              // Handle Google login
+                            }
+                          },
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.all(18),
+                            side: const BorderSide(color: MyColors.primary),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                height:
+                                    24, // Fixed box to prevent button height increase
+                                width: 24,
+                                child: Transform.scale(
+                                  scale:
+                                      1.7, // Visually increase image size only
+                                  child: Image.asset(
+                                    'assets/images/googleIcon.png',
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              const Text(
+                                'Continue with Google',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Don't have an account? ",
+                          style: MyTextTheme.lightTextTheme.bodySmall,
+                        ),
+                        InkWell(
+                          // onTap: () => SignUp(),
+                          child: Text(
+                            "Sign Up",
+                            style: TextStyle(
+                              color: MyColors.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
