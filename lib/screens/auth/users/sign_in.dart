@@ -1,5 +1,6 @@
 import 'package:bookify/screens/auth/users/forgetpass.dart';
 import 'package:bookify/screens/auth/users/sign_up.dart';
+import 'package:bookify/screens/home.dart';
 import 'package:bookify/utils/themes/custom_themes/elevated_button_theme.dart';
 import 'package:bookify/utils/themes/custom_themes/outlined_button_theme.dart';
 import 'package:bookify/utils/themes/custom_themes/text_theme.dart';
@@ -194,6 +195,12 @@ class _SignInState extends State<SignIn> {
                           child: OutlinedButton(
                             onPressed: () {
                               // Google Login
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => HomeScreen(),
+                                ),
+                              );
                             },
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.all(18),
