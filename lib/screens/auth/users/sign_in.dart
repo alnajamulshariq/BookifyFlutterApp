@@ -4,8 +4,10 @@ import 'package:bookify/screens/home.dart';
 import 'package:bookify/utils/themes/custom_themes/elevated_button_theme.dart';
 import 'package:bookify/utils/themes/custom_themes/outlined_button_theme.dart';
 import 'package:bookify/utils/themes/custom_themes/text_theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:bookify/utils/constants/colors.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -19,6 +21,30 @@ class _SignInState extends State<SignIn> {
   final emailController = TextEditingController();
   final passController = TextEditingController();
   bool _obscurePassword = true;
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn googleSignIn = GoogleSignIn(
+    clientId:
+        '973647700649-siskhfmfdn3fhqsvmcn08ueeb67mllh1.apps.googleusercontent.com',
+  );
+  Future<void> signInGoogle() async {
+    try {
+      final googleUser = await googleSignIn.signIn();
+      if (googleUser == null) return;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      await _auth.signInWithCredential(credential);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
+    } catch (e) {
+      print("Google SignIn error: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -152,9 +178,32 @@ class _SignInState extends State<SignIn> {
                         child: ElevatedButtonTheme(
                           data: MyElevatedButtonTheme.lightElevatedButtonTheme,
                           child: ElevatedButton(
-                            onPressed: () {
-                              if (formKey.currentState?.validate() ?? false) {
-                                // Handle login
+                            onPressed: () async {
+                              if (formKey.currentState!.validate()) {
+                                await _auth
+                                    .signInWithEmailAndPassword(
+                                      email: emailController.text.toString(),
+                                      password: passController.text.toString(),
+                                    )
+                                    .then((value) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => HomeScreen(),
+                                        ),
+                                      );
+                                    })
+                                    .onError((error, stackTrace) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(error.toString()),
+                                        ),
+                                      );
+                                      emailController.clear();
+                                      passController.clear();
+                                    });
                               }
                             },
                             child: const Text('Login'),
@@ -193,14 +242,9 @@ class _SignInState extends State<SignIn> {
                         child: OutlinedButtonTheme(
                           data: MyOutlinedButtonTheme.lightOutlinedButtonTheme,
                           child: OutlinedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               // Google Login
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => HomeScreen(),
-                                ),
-                              );
+                              await signInGoogle();
                             },
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.all(18),
@@ -249,7 +293,7 @@ class _SignInState extends State<SignIn> {
                           InkWell(
                             onTap: () => Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (_) => const SignUp()),
+                              MaterialPageRoute(builder: (context) => SignUp()),
                             ),
                             child: Text(
                               "Sign Up",

@@ -1,7 +1,9 @@
+import 'package:bookify/screens/auth/users/sign_in.dart';
 import 'package:bookify/utils/constants/colors.dart';
 import 'package:bookify/utils/themes/custom_themes/bookcard.dart';
 import 'package:bookify/utils/themes/custom_themes/bottomnavbar.dart';
 import 'package:bookify/utils/themes/custom_themes/text_theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -25,6 +27,8 @@ class _HomeScreenState extends State<HomeScreen> {
     'Poetry',
   ];
   int selectedIndex = 0;
+
+  final auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +78,22 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                     child: Icon(
                       Icons.search_rounded,
+                      color: MyColors.primary,
+                      size: 30,
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  InkWell(
+                    onTap: () {
+                      auth.signOut().then((value) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => SignIn()),
+                        );
+                      });
+                    },
+                    child: Icon(
+                      Icons.logout,
                       color: MyColors.primary,
                       size: 30,
                     ),

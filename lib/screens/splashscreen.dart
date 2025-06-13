@@ -1,6 +1,8 @@
+import 'package:bookify/screens/home.dart';
 import 'package:bookify/screens/onboarding.dart';
 import 'package:bookify/utils/constants/colors.dart';
 import 'package:bookify/utils/themes/custom_themes/text_theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -13,12 +15,23 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 5), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => OnBoarding()),
-      );
-    });
+    final auth = FirebaseAuth.instance;
+    final user = auth.currentUser;
+    if (user != null) {
+      Future.delayed(Duration(seconds: 3), () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen()),
+        );
+      });
+    } else {
+      Future.delayed(Duration(seconds: 5), () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => OnBoarding()),
+        );
+      });
+    }
   }
 
   @override

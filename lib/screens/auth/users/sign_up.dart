@@ -1,8 +1,9 @@
 import 'package:bookify/screens/auth/users/sign_in.dart';
 import 'package:bookify/utils/constants/colors.dart';
 import 'package:bookify/utils/themes/custom_themes/elevated_button_theme.dart';
-import 'package:bookify/utils/themes/custom_themes/outlined_button_theme.dart';
 import 'package:bookify/utils/themes/custom_themes/text_theme.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SignUp extends StatefulWidget {
@@ -20,6 +21,7 @@ class _SignUpState extends State<SignUp> {
   final phoneController = TextEditingController();
   final addressController = TextEditingController();
   bool _obscurePassword = true;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +61,7 @@ class _SignUpState extends State<SignUp> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const SizedBox(height: 10),
+
                       // Name
                       TextFormField(
                         controller: nameController,
@@ -80,6 +83,7 @@ class _SignUpState extends State<SignUp> {
                         },
                       ),
                       const SizedBox(height: 20),
+
                       // Email
                       TextFormField(
                         controller: emailController,
@@ -103,6 +107,7 @@ class _SignUpState extends State<SignUp> {
                         },
                       ),
                       const SizedBox(height: 20),
+
                       // Password
                       TextFormField(
                         controller: passController,
@@ -135,12 +140,14 @@ class _SignUpState extends State<SignUp> {
                           final passRegex = RegExp(
                             r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$',
                           );
-                          if (!passRegex.hasMatch(value))
+                          if (!passRegex.hasMatch(value)) {
                             return "Password must be 8+ chars w/ upper, lower, digit, special char";
+                          }
                           return null;
                         },
                       ),
                       const SizedBox(height: 20),
+
                       // Phone
                       TextFormField(
                         controller: phoneController,
@@ -164,6 +171,7 @@ class _SignUpState extends State<SignUp> {
                         },
                       ),
                       const SizedBox(height: 20),
+
                       // Address
                       TextFormField(
                         controller: addressController,
@@ -187,21 +195,61 @@ class _SignUpState extends State<SignUp> {
                         },
                       ),
                       const SizedBox(height: 20),
+
+                      // Sign Up Button
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
                           style: MyElevatedButtonTheme
                               .lightElevatedButtonTheme
                               .style,
-                          onPressed: () {
-                            if (formKey.currentState?.validate() ?? false) {
-                              // Submit logic
+                          onPressed: () async {
+                            if (formKey.currentState!.validate()) {
+                              final userCredential = await _auth
+                                  .createUserWithEmailAndPassword(
+                                    email: emailController.text.trim(),
+                                    password: passController.text.trim(),
+                                  );
+
+                              await FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(userCredential.user!.uid)
+                                  .set({
+                                    'name': nameController.text.trim(),
+                                    'phone': phoneController.text.trim(),
+                                    'address': addressController.text.trim(),
+                                    'uid': userCredential.user!.uid,
+                                    'createdAt': FieldValue.serverTimestamp(),
+                                  });
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("SignUp Successful"),
+                                ),
+                              );
+
+                              setState(() {
+                                nameController.clear();
+                                emailController.clear();
+                                passController.clear();
+                                phoneController.clear();
+                                addressController.clear();
+                              });
+
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SignIn(),
+                                ),
+                              );
                             }
                           },
                           child: const Text('Sign Up'),
                         ),
                       ),
                       const SizedBox(height: 20),
+
+                      // Already have account
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -210,10 +258,14 @@ class _SignUpState extends State<SignUp> {
                             style: MyTextTheme.lightTextTheme.bodySmall,
                           ),
                           InkWell(
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (_) => const SignIn()),
-                            ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SignIn(),
+                                ),
+                              );
+                            },
                             child: Text(
                               "Sign In",
                               style: TextStyle(

@@ -4,10 +4,14 @@ import 'package:bookify/screens/home.dart';
 import 'package:bookify/screens/profile.dart';
 import 'package:bookify/screens/splashscreen.dart';
 import 'package:bookify/screens/wishlist.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:bookify/utils/themes/themes.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const FlutterApp());
 }
 
@@ -29,7 +33,7 @@ class FlutterApp extends StatelessWidget {
         '/wishlist': (context) => WishListScreen(),
         '/profile': (context) => ProfileScreen(),
       },
-      home: HomeScreen(),
+      home: SplashScreen(),
     );
   }
 }

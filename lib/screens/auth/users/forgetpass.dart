@@ -1,4 +1,6 @@
+import 'package:bookify/screens/auth/users/sign_in.dart';
 import 'package:bookify/utils/themes/custom_themes/elevated_button_theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:bookify/utils/constants/colors.dart';
 import 'package:bookify/utils/themes/custom_themes/text_theme.dart';
@@ -11,8 +13,9 @@ class ForgetPass extends StatefulWidget {
 }
 
 class _ForgetPassState extends State<ForgetPass> {
-  final formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
+  FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +84,7 @@ class _ForgetPassState extends State<ForgetPass> {
 
               /// Email Input
               Form(
-                key: formKey,
+                key: _formKey,
                 child: TextFormField(
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
@@ -131,9 +134,18 @@ class _ForgetPassState extends State<ForgetPass> {
                 child: ElevatedButtonTheme(
                   data: MyElevatedButtonTheme.lightElevatedButtonTheme,
                   child: ElevatedButton(
-                    onPressed: () {
-                      if (formKey.currentState?.validate() ?? false) {
-                        debugPrint("Email sent to: ${emailController.text}");
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        await _auth.sendPasswordResetEmail(
+                          email: emailController.text,
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Email Send Successfully")),
+                        );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => SignIn()),
+                        );
                       }
                     },
                     child: const Text(
