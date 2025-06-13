@@ -1,5 +1,12 @@
 import 'package:bookify/screens/cart.dart';
 import 'package:bookify/screens/catalog.dart';
+import 'package:bookify/screens/categories/fantasy_page.dart';
+import 'package:bookify/screens/categories/history_page.dart';
+import 'package:bookify/screens/categories/novels_page.dart';
+import 'package:bookify/screens/categories/poetry_page.dart';
+import 'package:bookify/screens/categories/romance_page.dart';
+import 'package:bookify/screens/categories/science_page.dart';
+import 'package:bookify/screens/categories/self_love_page.dart';
 import 'package:bookify/screens/home.dart';
 import 'package:bookify/screens/profile.dart';
 import 'package:bookify/screens/splashscreen.dart';
@@ -26,12 +33,20 @@ class FlutterApp extends StatelessWidget {
       themeMode: ThemeMode.system,
       theme: MyTheme.lightTheme,
       darkTheme: MyTheme.darkTheme,
+      initialRoute: '/',
       routes: {
         '/home': (context) => HomeScreen(),
         '/catalog': (context) => CatalogScreen(),
         '/cart': (context) => CartScreen(),
         '/wishlist': (context) => WishListScreen(),
         '/profile': (context) => ProfileScreen(),
+        '/novels': (context) => NovelsPage(),
+        '/self-love': (context) => SelfLovePage(),
+        '/science': (context) => SciencePage(),
+        '/romance': (context) => RomancePage(),
+        '/history': (context) => HistoryPage(),
+        '/fantasy': (context) => FantasyPage(),
+        '/poetry': (context) => PoetryPage(),
       },
       home: SplashScreen(),
     );

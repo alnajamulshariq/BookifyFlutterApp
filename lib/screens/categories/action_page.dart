@@ -1,18 +1,17 @@
 import 'package:bookify/screens/auth/users/sign_in.dart';
 import 'package:bookify/utils/constants/colors.dart';
-import 'package:bookify/utils/themes/custom_themes/bottomnavbar.dart';
 import 'package:bookify/utils/themes/custom_themes/text_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+class ActionPage extends StatefulWidget {
+  const ActionPage({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<ActionPage> createState() => _ActionPageState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ActionPageState extends State<ActionPage> {
   bool _showSearchBar = false;
   final TextEditingController _searchController = TextEditingController();
   final auth = FirebaseAuth.instance;
@@ -20,7 +19,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFeeeeee),
-      bottomNavigationBar: buildCurvedNavBar(context, 4),
       body: SafeArea(
         child: Column(
           children: [
@@ -107,10 +105,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
             const SizedBox(height: 10),
-
             Center(
               child: Text(
-                "Profile Page",
+                "Action Category",
                 style: MyTextTheme.lightTextTheme.headlineMedium,
               ),
             ),
