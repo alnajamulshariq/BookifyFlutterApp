@@ -1,4 +1,8 @@
+import 'package:bookify/screens/all_books.dart';
 import 'package:bookify/screens/auth/users/sign_in.dart';
+import 'package:bookify/screens/categories/best_seller.dart';
+import 'package:bookify/screens/categories/featured_books.dart';
+import 'package:bookify/screens/categories/popular_books.dart';
 import 'package:bookify/utils/constants/colors.dart';
 import 'package:bookify/utils/themes/custom_themes/bookcard.dart';
 import 'package:bookify/utils/themes/custom_themes/bottomnavbar.dart';
@@ -25,6 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
     'History',
     'Fantasy',
     'Poetry',
+    'Action',
   ];
   // int selectedIndex = 0;
   void navigateToCategory(String title) {
@@ -42,6 +47,8 @@ class _HomeScreenState extends State<HomeScreen> {
       Navigator.pushNamed(context, '/fantasy');
     } else if (title == 'Poetry') {
       Navigator.pushNamed(context, '/poetry');
+    } else if (title == 'Action') {
+      Navigator.pushNamed(context, '/action');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("No page found for category: $title")),
@@ -162,7 +169,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: const Text(
-                              "Find interesting books from\nall over the world",
+                              "Find interesting books from\nthe Bookify App",
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: Colors.white,
@@ -200,7 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                   const SizedBox(height: 8),
                                   const Text(
-                                    "Continue Reading",
+                                    "Top Crime Story",
                                     style: TextStyle(
                                       color: Color(0xFF0C8A6C),
                                       fontWeight: FontWeight.w600,
@@ -294,7 +301,40 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
 
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 30),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Featured Books",
+                            style: MyTextTheme.lightTextTheme.headlineSmall,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const FeaturedPage(),
+                                ),
+                              );
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  "See All",
+                                  style: TextStyle(
+                                    color: MyColors.primary,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20),
                       SizedBox(
                         height: 260,
                         child: ListView(
@@ -314,9 +354,409 @@ class _HomeScreenState extends State<HomeScreen> {
                               price: 58,
                               rating: 4.7,
                             ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Sun Tzu – The Art of War',
+                              category: 'Strategic, Fantasy',
+                              price: 72,
+                              rating: 4.4,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Atomic Habits',
+                              category: 'Self Help',
+                              price: 58,
+                              rating: 4.7,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Sun Tzu – The Art of War',
+                              category: 'Strategic, Fantasy',
+                              price: 72,
+                              rating: 4.4,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Atomic Habits',
+                              category: 'Self Help',
+                              price: 58,
+                              rating: 4.7,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Sun Tzu – The Art of War',
+                              category: 'Strategic, Fantasy',
+                              price: 72,
+                              rating: 4.4,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Atomic Habits',
+                              category: 'Self Help',
+                              price: 58,
+                              rating: 4.7,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Sun Tzu – The Art of War',
+                              category: 'Strategic, Fantasy',
+                              price: 72,
+                              rating: 4.4,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Atomic Habits',
+                              category: 'Self Help',
+                              price: 58,
+                              rating: 4.7,
+                            ),
                           ],
                         ),
                       ),
+
+                      const SizedBox(height: 30),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Popular Books",
+                            style: MyTextTheme.lightTextTheme.headlineSmall,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const PopularPage(),
+                                ),
+                              );
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  "See All",
+                                  style: TextStyle(
+                                    color: MyColors.primary,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      SizedBox(height: 20),
+                      SizedBox(
+                        height: 260,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: const [
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Sun Tzu – The Art of War',
+                              category: 'Strategic, Fantasy',
+                              price: 72,
+                              rating: 4.4,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Atomic Habits',
+                              category: 'Self Help',
+                              price: 58,
+                              rating: 4.7,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Sun Tzu – The Art of War',
+                              category: 'Strategic, Fantasy',
+                              price: 72,
+                              rating: 4.4,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Atomic Habits',
+                              category: 'Self Help',
+                              price: 58,
+                              rating: 4.7,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Sun Tzu – The Art of War',
+                              category: 'Strategic, Fantasy',
+                              price: 72,
+                              rating: 4.4,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Atomic Habits',
+                              category: 'Self Help',
+                              price: 58,
+                              rating: 4.7,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Sun Tzu – The Art of War',
+                              category: 'Strategic, Fantasy',
+                              price: 72,
+                              rating: 4.4,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Atomic Habits',
+                              category: 'Self Help',
+                              price: 58,
+                              rating: 4.7,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Sun Tzu – The Art of War',
+                              category: 'Strategic, Fantasy',
+                              price: 72,
+                              rating: 4.4,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Atomic Habits',
+                              category: 'Self Help',
+                              price: 58,
+                              rating: 4.7,
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 30),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Best Selling Books",
+                            style: MyTextTheme.lightTextTheme.headlineSmall,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const BestSellerPage(),
+                                ),
+                              );
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  "See All",
+                                  style: TextStyle(
+                                    color: MyColors.primary,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      SizedBox(height: 20),
+                      SizedBox(
+                        height: 260,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: const [
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Sun Tzu – The Art of War',
+                              category: 'Strategic, Fantasy',
+                              price: 72,
+                              rating: 4.4,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Atomic Habits',
+                              category: 'Self Help',
+                              price: 58,
+                              rating: 4.7,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Sun Tzu – The Art of War',
+                              category: 'Strategic, Fantasy',
+                              price: 72,
+                              rating: 4.4,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Atomic Habits',
+                              category: 'Self Help',
+                              price: 58,
+                              rating: 4.7,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Sun Tzu – The Art of War',
+                              category: 'Strategic, Fantasy',
+                              price: 72,
+                              rating: 4.4,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Atomic Habits',
+                              category: 'Self Help',
+                              price: 58,
+                              rating: 4.7,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Sun Tzu – The Art of War',
+                              category: 'Strategic, Fantasy',
+                              price: 72,
+                              rating: 4.4,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Atomic Habits',
+                              category: 'Self Help',
+                              price: 58,
+                              rating: 4.7,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Sun Tzu – The Art of War',
+                              category: 'Strategic, Fantasy',
+                              price: 72,
+                              rating: 4.4,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Atomic Habits',
+                              category: 'Self Help',
+                              price: 58,
+                              rating: 4.7,
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 30),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Explore Our All Books",
+                            style: MyTextTheme.lightTextTheme.headlineSmall,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const AllBooksPage(),
+                                ),
+                              );
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  "See All",
+                                  style: TextStyle(
+                                    color: MyColors.primary,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      SizedBox(height: 20),
+                      SizedBox(
+                        height: 260,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: const [
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Sun Tzu – The Art of War',
+                              category: 'Strategic, Fantasy',
+                              price: 72,
+                              rating: 4.4,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Atomic Habits',
+                              category: 'Self Help',
+                              price: 58,
+                              rating: 4.7,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Sun Tzu – The Art of War',
+                              category: 'Strategic, Fantasy',
+                              price: 72,
+                              rating: 4.4,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Atomic Habits',
+                              category: 'Self Help',
+                              price: 58,
+                              rating: 4.7,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Sun Tzu – The Art of War',
+                              category: 'Strategic, Fantasy',
+                              price: 72,
+                              rating: 4.4,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Atomic Habits',
+                              category: 'Self Help',
+                              price: 58,
+                              rating: 4.7,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Sun Tzu – The Art of War',
+                              category: 'Strategic, Fantasy',
+                              price: 72,
+                              rating: 4.4,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Atomic Habits',
+                              category: 'Self Help',
+                              price: 58,
+                              rating: 4.7,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Sun Tzu – The Art of War',
+                              category: 'Strategic, Fantasy',
+                              price: 72,
+                              rating: 4.4,
+                            ),
+                            BookCard(
+                              imagePath: 'assets/images/thespidy.jpg',
+                              title: 'Atomic Habits',
+                              category: 'Self Help',
+                              price: 58,
+                              rating: 4.7,
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 30),
                     ],
                   ),
                 ),

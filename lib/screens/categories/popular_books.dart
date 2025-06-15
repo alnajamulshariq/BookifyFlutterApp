@@ -5,14 +5,14 @@ import 'package:bookify/utils/themes/custom_themes/text_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class AllBooksPage extends StatefulWidget {
-  const AllBooksPage({super.key});
+class PopularPage extends StatefulWidget {
+  const PopularPage({super.key});
 
   @override
-  State<AllBooksPage> createState() => _AllBooksPageState();
+  State<PopularPage> createState() => _PopularPageState();
 }
 
-class _AllBooksPageState extends State<AllBooksPage> {
+class _PopularPageState extends State<PopularPage> {
   bool _showSearchBar = false;
   final TextEditingController _searchController = TextEditingController();
   final auth = FirebaseAuth.instance;
@@ -222,7 +222,6 @@ class _AllBooksPageState extends State<AllBooksPage> {
                 ),
               ),
             const SizedBox(height: 10),
-
             const SizedBox(height: 10),
 
             Padding(
@@ -271,7 +270,7 @@ class _AllBooksPageState extends State<AllBooksPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Bookify All Books",
+                    "Popular Books",
                     style: MyTextTheme.lightTextTheme.headlineMedium,
                   ),
                   Theme(
