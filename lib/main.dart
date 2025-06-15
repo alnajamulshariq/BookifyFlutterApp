@@ -1,5 +1,6 @@
 import 'package:bookify/screens/cart.dart';
 import 'package:bookify/screens/catalog.dart';
+import 'package:bookify/screens/categories/action_page.dart';
 import 'package:bookify/screens/categories/fantasy_page.dart';
 import 'package:bookify/screens/categories/history_page.dart';
 import 'package:bookify/screens/categories/novels_page.dart';
@@ -47,6 +48,7 @@ class FlutterApp extends StatelessWidget {
         '/history': (context) => HistoryPage(),
         '/fantasy': (context) => FantasyPage(),
         '/poetry': (context) => PoetryPage(),
+        '/action': (context) => ActionPage(),
       },
       home: SplashScreen(),
     );

@@ -22,6 +22,14 @@ class _SignUpState extends State<SignUp> {
   final addressController = TextEditingController();
   bool _obscurePassword = true;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    passController.dispose();
+    phoneController.dispose();
+    addressController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -204,44 +212,46 @@ class _SignUpState extends State<SignUp> {
                               .lightElevatedButtonTheme
                               .style,
                           onPressed: () async {
-                            if (formKey.currentState!.validate()) {
-                              final userCredential = await _auth
-                                  .createUserWithEmailAndPassword(
-                                    email: emailController.text.trim(),
-                                    password: passController.text.trim(),
-                                  );
+                            try {
+                              if (formKey.currentState!.validate()) {
+                                final userCredential = await _auth
+                                    .createUserWithEmailAndPassword(
+                                      email: emailController.text.trim(),
+                                      password: passController.text.trim(),
+                                    );
 
-                              await FirebaseFirestore.instance
-                                  .collection('users')
-                                  .doc(userCredential.user!.uid)
-                                  .set({
-                                    'name': nameController.text.trim(),
-                                    'phone': phoneController.text.trim(),
-                                    'address': addressController.text.trim(),
-                                    'uid': userCredential.user!.uid,
-                                    'createdAt': FieldValue.serverTimestamp(),
-                                  });
+                                await FirebaseFirestore.instance
+                                    .collection('users')
+                                    .doc(userCredential.user!.uid)
+                                    .set({
+                                      'name': nameController.text.trim(),
+                                      'phone': phoneController.text.trim(),
+                                      'address': addressController.text.trim(),
+                                      'uid': userCredential.user!.uid,
+                                      'createdAt': FieldValue.serverTimestamp(),
+                                    });
 
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("SignUp Successful"),
-                                ),
-                              );
-
-                              setState(() {
                                 nameController.clear();
                                 emailController.clear();
                                 passController.clear();
                                 phoneController.clear();
                                 addressController.clear();
-                              });
 
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => SignIn(),
-                                ),
-                              );
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("SignUp Successful"),
+                                  ),
+                                );
+
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => SignIn(),
+                                  ),
+                                );
+                              }
+                            } catch (e) {
+                              print(e);
                             }
                           },
                           child: const Text('Sign Up'),

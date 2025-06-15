@@ -1,8 +1,10 @@
 import 'package:bookify/screens/auth/users/forgetpass.dart';
 import 'package:bookify/screens/auth/users/sign_up.dart';
 import 'package:bookify/screens/home.dart';
+import 'package:bookify/showDialoguesAlert/login_fail_dialogue.dart';
 import 'package:bookify/utils/themes/custom_themes/elevated_button_theme.dart';
 import 'package:bookify/utils/themes/custom_themes/outlined_button_theme.dart';
+import 'package:bookify/showDialoguesAlert/login_success_dialogue.dart';
 import 'package:bookify/utils/themes/custom_themes/text_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -186,21 +188,24 @@ class _SignInState extends State<SignIn> {
                                       password: passController.text.toString(),
                                     )
                                     .then((value) {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => HomeScreen(),
-                                        ),
+                                      showLoginSuccessDialog(context);
+
+                                      // Wait 2 seconds, then navigate to HomeScreen
+                                      Future.delayed(
+                                        const Duration(seconds: 2),
+                                        () {
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) => HomeScreen(),
+                                            ),
+                                          );
+                                        },
                                       );
                                     })
                                     .onError((error, stackTrace) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: Text(error.toString()),
-                                        ),
-                                      );
+                                      showLoginFailDialog(context);
+
                                       emailController.clear();
                                       passController.clear();
                                     });
