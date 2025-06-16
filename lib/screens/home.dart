@@ -20,6 +20,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool _showSearchBar = false;
   final TextEditingController _searchController = TextEditingController();
+  // final user = FirebaseAuth.instance.currentUser;
 
   final List<String> categories = [
     'Novels',
@@ -72,19 +73,23 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Row(
                 children: [
+                  // if (user?.photoURL != null)
                   ClipOval(
                     child: Image.asset(
                       "assets/images/b.jpg",
+                      // user!.photoURL!,
                       width: 40,
                       height: 40,
                       fit: BoxFit.cover,
                     ),
                   ),
+
                   const SizedBox(width: 10),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
+                        // "Hi, ${user?.displayName ?? "Guest"}",
                         "Hi, Shariq",
                         style: MyTextTheme.lightTextTheme.titleLarge,
                       ),
