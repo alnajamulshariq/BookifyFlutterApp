@@ -1,10 +1,11 @@
+import 'package:bookify/screens/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:bookify/screens/home.dart';
 import 'package:bookify/screens/catalog.dart';
 import 'package:bookify/screens/cart.dart';
 import 'package:bookify/screens/wishlist.dart';
-import 'package:bookify/screens/profile.dart';
+import 'package:bookify/screens/edit_profile.dart';
 
 /// Smooth fade transition navigation
 void navigateWithFade(BuildContext context, Widget targetPage) {

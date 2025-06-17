@@ -7,7 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SignUp extends StatefulWidget {
-  const SignUp({super.key});
+  SignUp({super.key});
 
   @override
   State<SignUp> createState() => _SignUpState();
@@ -15,21 +15,20 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   final formKey = GlobalKey<FormState>();
+
   final nameController = TextEditingController();
+
   final emailController = TextEditingController();
+
   final passController = TextEditingController();
+
   final phoneController = TextEditingController();
+
   final addressController = TextEditingController();
+
   bool _obscurePassword = true;
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  void dispose() {
-    nameController.dispose();
-    emailController.dispose();
-    passController.dispose();
-    phoneController.dispose();
-    addressController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -213,24 +212,28 @@ class _SignUpState extends State<SignUp> {
                               .style,
                           onPressed: () async {
                             try {
-                              if (formKey.currentState!.validate()) {
-                                final userCredential = await _auth
-                                    .createUserWithEmailAndPassword(
-                                      email: emailController.text.trim(),
-                                      password: passController.text.trim(),
-                                    );
+                              final userCredential = await _auth
+                                  .createUserWithEmailAndPassword(
+                                    email: emailController.text.trim(),
+                                    password: passController.text.trim(),
+                                  );
 
+                              final user = userCredential.user;
+
+                              if (user != null) {
                                 await FirebaseFirestore.instance
                                     .collection('users')
-                                    .doc(userCredential.user!.uid)
+                                    .doc(user.uid)
                                     .set({
                                       'name': nameController.text.trim(),
+                                      'role': "User",
                                       'phone': phoneController.text.trim(),
                                       'address': addressController.text.trim(),
-                                      'uid': userCredential.user!.uid,
+                                      'uid': user.uid,
                                       'createdAt': FieldValue.serverTimestamp(),
                                     });
 
+                                // Clear form
                                 nameController.clear();
                                 emailController.clear();
                                 passController.clear();
@@ -238,20 +241,29 @@ class _SignUpState extends State<SignUp> {
                                 addressController.clear();
 
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text("SignUp Successful"),
-                                  ),
+                                  SnackBar(content: Text("SignUp Successful")),
                                 );
 
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => SignIn(),
+                                    builder: (context) => const SignIn(),
+                                  ),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      "Sign up failed: No user returned",
+                                    ),
                                   ),
                                 );
                               }
                             } catch (e) {
-                              print(e);
+                              debugPrint("Error during sign up: $e");
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text("Sign up failed: $e")),
+                              );
                             }
                           },
                           child: const Text('Sign Up'),
@@ -259,7 +271,6 @@ class _SignUpState extends State<SignUp> {
                       ),
                       const SizedBox(height: 20),
 
-                      // Already have account
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

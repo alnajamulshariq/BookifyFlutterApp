@@ -5,7 +5,6 @@ import 'package:bookify/utils/themes/custom_themes/text_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-
 class SelfLovePage extends StatefulWidget {
   const SelfLovePage({super.key});
 

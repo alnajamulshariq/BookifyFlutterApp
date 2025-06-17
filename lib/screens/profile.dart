@@ -1,4 +1,5 @@
 import 'package:bookify/screens/auth/users/sign_in.dart';
+import 'package:bookify/screens/edit_profile.dart';
 import 'package:bookify/utils/constants/colors.dart';
 import 'package:bookify/utils/themes/custom_themes/bottomnavbar.dart';
 import 'package:bookify/utils/themes/custom_themes/elevated_button_theme.dart';
@@ -17,6 +18,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool _showSearchBar = false;
   final TextEditingController _searchController = TextEditingController();
   final auth = FirebaseAuth.instance;
+
+  // Static Data for Profile
+  String name = "Shariq";
+  String email = "shariq@example.com";
+  String contact = "+92 300 1234567";
+  String address = "Karachi, Pakistan";
+  String profileImage = "assets/images/b.jpg"; // Use an existing image path
+  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,7 +106,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   controller: _searchController,
                   style: const TextStyle(color: Colors.black),
                   decoration: InputDecoration(
-                    hintText: "Search...",
+                    hintText: "Search your wishlist...",
                     hintStyle: const TextStyle(color: Colors.grey),
                     prefixIcon: const Icon(Icons.search, color: Colors.grey),
                     border: OutlineInputBorder(
@@ -111,150 +121,193 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             Center(
               child: Text(
-                "Profile Page",
-                style: MyTextTheme.lightTextTheme.headlineMedium,
+                "Profile Details",
+                style: MyTextTheme.lightTextTheme.headlineMedium?.copyWith(
+                  color: MyColors.primary,
+                ),
               ),
             ),
-            const SizedBox(height: 20),
+
+            SizedBox(height: 20),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: ClipOval(
+                child: Image.asset(
+                  profileImage, // Path to your profile image
+                  width: 100, // Width of the circular image
+                  height: 100, // Height of the circular image
+                  fit: BoxFit.cover, // Ensures the image fits inside the circle
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Form(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        style: const TextStyle(color: Colors.black),
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.person),
-                          labelText: "Full Name",
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return "Name is required";
-                          } else if (value.length < 3) {
-                            return "Name must be of 3 characters";
-                          }
-                          return null;
-                        },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(158, 205, 249, 239),
+                  borderRadius: BorderRadius.circular(16), // Round the corners
+                  border: Border.all(
+                    color: MyColors.primary, // Border color
+                    width: 1, // Border width
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ), // Inner padding for content
+                  child: Row(
+                    children: [
+                      Text(
+                        "Name:",
+                        style: MyTextTheme.lightTextTheme.headlineSmall
+                            ?.copyWith(color: MyColors.primary),
                       ),
-                    ),
+                      SizedBox(width: 10),
+                      Text(
+                        "$name",
+                        style: MyTextTheme.lightTextTheme.titleMedium?.copyWith(
+                          color: Colors.teal,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
 
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        style: const TextStyle(color: Colors.black),
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.email),
-                          labelText: "Email",
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty)
-                            return "Email is required";
-                          final emailRegex = RegExp(
-                            r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$",
-                          );
-                          if (!emailRegex.hasMatch(value))
-                            return "Enter a valid email address";
-                          return null;
-                        },
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(158, 205, 249, 239),
+                  borderRadius: BorderRadius.circular(16), // Round the corners
+                  border: Border.all(
+                    color: MyColors.primary, // Border color
+                    width: 1, // Border width
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ), // Inner padding for content
+                  child: Row(
+                    children: [
+                      Text(
+                        "Email:",
+                        style: MyTextTheme.lightTextTheme.headlineSmall
+                            ?.copyWith(color: MyColors.primary),
                       ),
-                    ),
+                      SizedBox(width: 10),
+                      Text(
+                        "$email",
+                        style: MyTextTheme.lightTextTheme.titleMedium?.copyWith(
+                          color: Colors.teal,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
 
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        style: const TextStyle(color: Colors.black),
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.lock),
-                          labelText: "Password",
-                          suffixIcon: Icon(Icons.remove_red_eye),
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty)
-                            return "Password is required";
-                          final passRegex = RegExp(
-                            r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$',
-                          );
-                          if (!passRegex.hasMatch(value))
-                            return "Password must be 8+ chars w/ upper, lower, digit, special char";
-                          return null;
-                        },
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(158, 205, 249, 239),
+                  borderRadius: BorderRadius.circular(16), // Round the corners
+                  border: Border.all(
+                    color: MyColors.primary, // Border color
+                    width: 1, // Border width
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ), // Inner padding for content
+                  child: Row(
+                    children: [
+                      Text(
+                        "Contact:",
+                        style: MyTextTheme.lightTextTheme.headlineSmall
+                            ?.copyWith(color: MyColors.primary),
                       ),
-                    ),
+                      SizedBox(width: 10),
+                      Text(
+                        "$contact",
+                        style: MyTextTheme.lightTextTheme.titleMedium?.copyWith(
+                          color: Colors.teal,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
 
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        style: const TextStyle(color: Colors.black),
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.home),
-                          labelText: "Address",
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            if (value == null || value.isEmpty)
-                              return "Address is required";
-                            final addressRegex = RegExp(
-                              r"^[A-Za-z0-9\s,.\-\/]{5,}$",
-                            );
-                            if (!addressRegex.hasMatch(value))
-                              return "Enter your valid address";
-                            return null;
-                          }
-                          return null;
-                        },
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(158, 205, 249, 239),
+                  borderRadius: BorderRadius.circular(16), // Round the corners
+                  border: Border.all(
+                    color: MyColors.primary, // Border color
+                    width: 1, // Border width
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ), // Inner padding for content
+                  child: Row(
+                    children: [
+                      Text(
+                        "Address:",
+                        style: MyTextTheme.lightTextTheme.headlineSmall
+                            ?.copyWith(color: MyColors.primary),
                       ),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        style: const TextStyle(color: Colors.black),
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.phone),
-                          labelText: "Phone Number",
-                          border: OutlineInputBorder(),
+                      SizedBox(width: 10),
+                      Text(
+                        "$address",
+                        style: MyTextTheme.lightTextTheme.titleMedium?.copyWith(
+                          color: Colors.teal,
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty)
-                            return "Phone number is required";
-                          final phoneRegex = RegExp(
-                            r"^(?:\+92|0092|92)?3[0-9]{9}$",
-                          );
-                          if (!phoneRegex.hasMatch(value))
-                            return "Enter a valid Pakistani phone number";
-                          return null;
-                        },
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
             const SizedBox(height: 20),
+
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(12.0),
               child: SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
-                  style: MyElevatedButtonTheme.lightElevatedButtonTheme.style,
-                  onPressed: () {},
-                  child: const Text('Save Changes'),
+                child: ElevatedButtonTheme(
+                  data: MyElevatedButtonTheme.lightElevatedButtonTheme,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditProfileScreen(),
+                        ),
+                      );
+                    },
+                    child: Text("Edit Profile"),
+                  ),
                 ),
               ),
             ),
