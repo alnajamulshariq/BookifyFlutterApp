@@ -10,6 +10,13 @@ class ManageOrders extends StatefulWidget {
 class _ManageOrdersState extends State<ManageOrders> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      backgroundColor: Color(0xFFeeeeee),
+      body: SafeArea(child: Column(
+        children: [
+          Text("Manage Orders")
+        ],
+      )),
+    );
   }
 }

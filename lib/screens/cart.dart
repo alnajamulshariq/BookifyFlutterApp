@@ -1,6 +1,8 @@
 import 'package:bookify/screens/auth/users/sign_in.dart';
+import 'package:bookify/screens/checkout.dart';
 import 'package:bookify/utils/constants/colors.dart';
 import 'package:bookify/utils/themes/custom_themes/bottomnavbar.dart';
+import 'package:bookify/utils/themes/custom_themes/elevated_button_theme.dart';
 import 'package:bookify/utils/themes/custom_themes/text_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -114,7 +116,7 @@ class _CartScreenState extends State<CartScreen> {
                   horizontal: 24,
                   vertical: 16,
                 ),
-                itemCount: 10,
+                itemCount: 3,
                 itemBuilder: (context, index) {
                   int quantity = 1;
 
@@ -262,6 +264,26 @@ class _CartScreenState extends State<CartScreen> {
                 },
               ),
             ),
+
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButtonTheme(
+                  data: MyElevatedButtonTheme.lightElevatedButtonTheme,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Checkout()),
+                      );
+                    },
+                    child: Text("Check Out"),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 20),
           ],
         ),
       ),

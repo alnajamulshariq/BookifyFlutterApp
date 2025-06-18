@@ -10,6 +10,9 @@ class ManageUsers extends StatefulWidget {
 class _ManageUsersState extends State<ManageUsers> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      backgroundColor: Color(0xFFeeeeee),
+      body: SafeArea(child: Column(children: [Text("Manage Users")])),
+    );
   }
 }

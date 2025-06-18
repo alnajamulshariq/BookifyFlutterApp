@@ -5,7 +5,6 @@ import 'package:bookify/screens/home.dart';
 import 'package:bookify/screens/catalog.dart';
 import 'package:bookify/screens/cart.dart';
 import 'package:bookify/screens/wishlist.dart';
-import 'package:bookify/screens/edit_profile.dart';
 
 /// Smooth fade transition navigation
 void navigateWithFade(BuildContext context, Widget targetPage) {
