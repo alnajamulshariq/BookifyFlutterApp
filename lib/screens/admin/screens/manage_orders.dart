@@ -1,3 +1,5 @@
+import 'package:bookify/utils/themes/custom_themes/adminbottomnavbar.dart';
+import 'package:bookify/utils/themes/custom_themes/text_theme.dart';
 import 'package:flutter/material.dart';
 
 class ManageOrders extends StatefulWidget {
@@ -12,11 +14,14 @@ class _ManageOrdersState extends State<ManageOrders> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFeeeeee),
-      body: SafeArea(child: Column(
-        children: [
-          Text("Manage Orders")
-        ],
-      )),
+      bottomNavigationBar: buildAdminCurvedNavBar(context, 3),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Text("Manage Orders", style: MyTextTheme.lightTextTheme.titleMedium),
+          ],
+        ),
+      ),
     );
   }
 }

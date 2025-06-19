@@ -1,3 +1,4 @@
+import 'package:bookify/utils/themes/custom_themes/adminbottomnavbar.dart';
 import 'package:bookify/utils/themes/custom_themes/text_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -13,6 +14,7 @@ class _ManageBooksState extends State<ManageBooks> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFeeeeee),
+      bottomNavigationBar: buildAdminCurvedNavBar(context, 1),
       body: SafeArea(
         child: Column(
           children: [
