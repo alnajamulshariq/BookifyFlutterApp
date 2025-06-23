@@ -1,3 +1,4 @@
+import 'package:bookify/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
 
 class LoginSuccessDialog extends StatelessWidget {
@@ -16,7 +17,7 @@ class LoginSuccessDialog extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.orange.withOpacity(0.3),
+                color: MyColors.primary.withOpacity(0.3),
                 blurRadius: 10,
                 spreadRadius: 4,
               ),
@@ -30,7 +31,7 @@ class LoginSuccessDialog extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: const LinearGradient(
-                    colors: [Colors.deepOrange, Colors.orange],
+                    colors: [MyColors.primary, Colors.teal],
                   ),
                 ),
                 child: const Icon(Icons.check, size: 48, color: Colors.white),

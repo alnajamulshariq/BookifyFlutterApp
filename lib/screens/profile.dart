@@ -1,5 +1,6 @@
 import 'package:bookify/screens/auth/users/sign_in.dart';
 import 'package:bookify/screens/edit_profile.dart';
+import 'package:bookify/screens/user_orders.dart';
 import 'package:bookify/utils/constants/colors.dart';
 import 'package:bookify/utils/themes/custom_themes/bottomnavbar.dart';
 import 'package:bookify/utils/themes/custom_themes/elevated_button_theme.dart';
@@ -117,7 +118,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
               ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
+
+            Padding(
+              padding: const EdgeInsets.only(right: 4),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => UserOrders()));
+                  },
+                  child: Text(
+                    "View Orders",
+                    style: TextStyle(
+                      color: Colors.teal,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            SizedBox(height: 20),
 
             Center(
               child: Text(

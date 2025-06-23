@@ -1,3 +1,4 @@
+import 'package:bookify/screens/book_detail_page.dart';
 import 'package:bookify/screens/auth/users/sign_in.dart';
 import 'package:bookify/utils/constants/colors.dart';
 import 'package:bookify/utils/themes/custom_themes/bookcard.dart';
@@ -343,12 +344,22 @@ class _AllBooksPageState extends State<AllBooksPage> {
                   ),
                   itemBuilder: (context, index) {
                     final book = books[index];
-                    return BookCard(
-                      imagePath: book['imagePath'],
-                      title: book['title'],
-                      category: book['category'],
-                      price: book['price'],
-                      rating: book['rating'],
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => BookDetailPage(book: book),
+                          ),
+                        );
+                      },
+                      child: BookCard(
+                        imagePath: book['imagePath'],
+                        title: book['title'],
+                        category: book['category'],
+                        price: book['price'],
+                        rating: book['rating'],
+                      ),
                     );
                   },
                 ),

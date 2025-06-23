@@ -203,9 +203,9 @@
 //   }
 // }
 
-import 'package:bookify/screens/admin/screens/manage_books.dart';
-import 'package:bookify/screens/admin/screens/manage_orders.dart';
-import 'package:bookify/screens/admin/screens/manage_users.dart';
+import 'package:bookify/screens/admin/screens/manage_books/manage_books.dart';
+import 'package:bookify/screens/admin/screens/manage_orders/manage_orders.dart';
+import 'package:bookify/screens/admin/screens/manage_users/manage_users.dart';
 import 'package:bookify/screens/auth/users/sign_in.dart';
 import 'package:bookify/utils/constants/colors.dart';
 import 'package:bookify/utils/themes/custom_themes/adminbottomnavbar.dart';
