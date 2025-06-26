@@ -223,6 +223,7 @@
 
 import 'package:bookify/screens/auth/users/sign_in.dart';
 import 'package:bookify/utils/constants/colors.dart';
+import 'package:bookify/utils/themes/custom_themes/app_navbar.dart';
 import 'package:bookify/utils/themes/custom_themes/bookcard.dart';
 import 'package:bookify/utils/themes/custom_themes/text_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -236,8 +237,6 @@ class FeaturedPage extends StatefulWidget {
 }
 
 class _FeaturedPageState extends State<FeaturedPage> {
-  bool _showSearchBar = false;
-  final TextEditingController _searchController = TextEditingController();
   final auth = FirebaseAuth.instance;
 
   final List<Map<String, dynamic>> books = [
@@ -364,75 +363,7 @@ class _FeaturedPageState extends State<FeaturedPage> {
         child: Column(
           children: [
             const SizedBox(height: 30),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Row(
-                children: [
-                  ClipOval(
-                    child: Image.asset(
-                      "assets/images/b.jpg",
-                      width: 40,
-                      height: 40,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Hi, Shariq",
-                        style: MyTextTheme.lightTextTheme.titleLarge,
-                      ),
-                      const Text(
-                        "Have a nice day",
-                        style: TextStyle(color: Colors.grey, fontSize: 12),
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    icon: Icon(Icons.search_rounded, color: MyColors.primary),
-                    onPressed: () {
-                      setState(() {
-                        _showSearchBar = !_showSearchBar;
-                      });
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.logout, color: MyColors.primary),
-                    onPressed: () {
-                      auth.signOut().then((value) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const SignIn(),
-                          ),
-                        );
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
-
-            if (_showSearchBar)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-                child: TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: "Search...",
-                    hintStyle: const TextStyle(color: Colors.grey),
-                    prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
-                ),
-              ),
+            const CustomNavBar(),
 
             const SizedBox(height: 10),
 

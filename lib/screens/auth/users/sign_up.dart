@@ -5,6 +5,7 @@ import 'package:bookify/utils/themes/custom_themes/text_theme.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class SignUp extends StatefulWidget {
   SignUp({super.key});
@@ -226,10 +227,12 @@ class _SignUpState extends State<SignUp> {
                                     .doc(user.uid)
                                     .set({
                                       'name': nameController.text.trim(),
+                                      'email': emailController.text.trim(),
                                       'role': "User",
                                       'phone': phoneController.text.trim(),
                                       'address': addressController.text.trim(),
                                       'uid': user.uid,
+                                      'profile_image_url': '',
                                       'createdAt': FieldValue.serverTimestamp(),
                                     });
 

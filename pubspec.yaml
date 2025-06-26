@@ -44,6 +44,7 @@ dependencies:
   image_picker: ^1.1.2
   fl_chart: ^1.0.0
   dropdown_button2: ^2.3.9
+  supabase_flutter: ^2.9.1
 
 dev_dependencies:
   flutter_test:

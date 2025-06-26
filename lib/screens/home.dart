@@ -4,9 +4,11 @@ import 'package:bookify/screens/categories/best_seller.dart';
 import 'package:bookify/screens/categories/featured_books.dart';
 import 'package:bookify/screens/categories/popular_books.dart';
 import 'package:bookify/utils/constants/colors.dart';
+import 'package:bookify/utils/themes/custom_themes/app_navbar.dart';
 import 'package:bookify/utils/themes/custom_themes/bookcard.dart';
 import 'package:bookify/utils/themes/custom_themes/bottomnavbar.dart';
 import 'package:bookify/utils/themes/custom_themes/text_theme.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -18,9 +20,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool _showSearchBar = false;
-  final TextEditingController _searchController = TextEditingController();
-  // final user = FirebaseAuth.instance.currentUser;
+  // bool _showSearchBar = false;
+  // final TextEditingController _searchController = TextEditingController();
+  final user = FirebaseAuth.instance.currentUser;
 
   final List<String> categories = [
     'Novels',
@@ -59,6 +61,45 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final auth = FirebaseAuth.instance;
 
+  // Dynamic Data from Firestore
+  String name = '';
+  String profileImage = '';
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserData();
+  }
+
+  Future<void> fetchUserData() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      try {
+        final doc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(uid)
+            .get();
+        final data = doc.data();
+
+        if (data != null) {
+          setState(() {
+            name = data['name'] ?? '';
+            // email = data['email'] ?? '';
+            // contact = data['phone'] ?? '';
+            // address = data['address'] ?? '';
+            profileImage = data['profile_image_url'] ?? '';
+          });
+        }
+      } catch (e) {
+        print("Error fetching profile: $e");
+      }
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,90 +110,105 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 30),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Row(
-                children: [
-                  // if (user?.photoURL != null)
-                  ClipOval(
-                    child: Image.asset(
-                      "assets/images/b.jpg",
-                      // user!.photoURL!,
-                      width: 40,
-                      height: 40,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
+            const CustomNavBar(),
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            //   child: Row(
+            //     children: [
+            //       // if (user?.photoURL != null)
+            //       ClipOval(
+            //         child: (profileImage.isNotEmpty)
+            //             ? Image.network(
+            //                 profileImage, // Use Firestore image URL
+            //                 width: 40,
+            //                 height: 40,
+            //                 fit: BoxFit.cover,
+            //               )
+            //             : (user?.photoURL != null)
+            //             ? Image.network(
+            //                 user!
+            //                     .photoURL!, // Use Google SignIn photo URL if available
+            //                 width: 40,
+            //                 height: 40,
+            //                 fit: BoxFit.cover,
+            //               )
+            //             : const Icon(
+            //                 // Fallback icon if no profile image is found
+            //                 Icons.person,
+            //                 size: 40,
+            //                 color: Colors.grey,
+            //               ),
+            //       ),
 
-                  const SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        // "Hi, ${user?.displayName ?? "Guest"}",
-                        "Hi, Shariq",
-                        style: MyTextTheme.lightTextTheme.titleLarge,
-                      ),
-                      const Text(
-                        "Have a nice day",
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        _showSearchBar = !_showSearchBar;
-                      });
-                    },
-                    child: Icon(
-                      Icons.search_rounded,
-                      color: MyColors.primary,
-                      size: 30,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  InkWell(
-                    onTap: () {
-                      auth.signOut().then((value) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => SignIn()),
-                        );
-                      });
-                    },
-                    child: Icon(
-                      Icons.logout,
-                      color: MyColors.primary,
-                      size: 30,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (_showSearchBar)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-                child: TextField(
-                  controller: _searchController,
-                  style: const TextStyle(color: Colors.black),
-                  decoration: InputDecoration(
-                    hintText: "Search...",
-                    hintStyle: const TextStyle(color: Colors.grey),
-                    prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
-                ),
-              ),
+            //       const SizedBox(width: 10),
+            //       Column(
+            //         crossAxisAlignment: CrossAxisAlignment.start,
+            //         children: [
+            //           Text(
+            //             "Hi, ${user?.displayName ?? name}",
+            //             style: MyTextTheme.lightTextTheme.titleLarge,
+            //           ),
+            //           const Text(
+            //             "Have a nice day",
+            //             style: TextStyle(
+            //               color: Colors.grey,
+            //               fontSize: 12,
+            //               fontWeight: FontWeight.w500,
+            //             ),
+            //           ),
+            //         ],
+            //       ),
+            //       const Spacer(),
+            //       InkWell(
+            //         onTap: () {
+            //           setState(() {
+            //             _showSearchBar = !_showSearchBar;
+            //           });
+            //         },
+            //         child: Icon(
+            //           Icons.search_rounded,
+            //           color: MyColors.primary,
+            //           size: 30,
+            //         ),
+            //       ),
+            //       const SizedBox(width: 10),
+            //       InkWell(
+            //         onTap: () {
+            //           auth.signOut().then((value) {
+            //             Navigator.pushReplacement(
+            //               context,
+            //               MaterialPageRoute(builder: (context) => SignIn()),
+            //             );
+            //           });
+            //         },
+            //         child: Icon(
+            //           Icons.logout,
+            //           color: MyColors.primary,
+            //           size: 30,
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
+
+            // if (_showSearchBar)
+            //   Padding(
+            //     padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+            //     child: TextField(
+            //       controller: _searchController,
+            //       style: const TextStyle(color: Colors.black),
+            //       decoration: InputDecoration(
+            //         hintText: "Search...",
+            //         hintStyle: const TextStyle(color: Colors.grey),
+            //         prefixIcon: const Icon(Icons.search, color: Colors.grey),
+            //         border: OutlineInputBorder(
+            //           borderRadius: BorderRadius.circular(12),
+            //         ),
+            //         filled: true,
+            //         fillColor: Colors.white,
+            //       ),
+            //     ),
+            //   ),
             const SizedBox(height: 10),
             Expanded(
               child: SingleChildScrollView(
