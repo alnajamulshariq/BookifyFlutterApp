@@ -159,7 +159,6 @@
 //   }
 // }
 
-
 import 'package:bookify/screens/auth/users/sign_in.dart';
 import 'package:bookify/utils/constants/colors.dart';
 import 'package:bookify/utils/themes/custom_themes/app_navbar.dart';
@@ -179,7 +178,7 @@ class BookDetailPage extends StatefulWidget {
 
 class _BookDetailPageState extends State<BookDetailPage> {
   final auth = FirebaseAuth.instance;
-  late DocumentSnapshot bookData;
+  DocumentSnapshot? bookData; // Make it nullable
 
   @override
   void initState() {
@@ -209,15 +208,16 @@ class _BookDetailPageState extends State<BookDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Check if book data is loaded
+    // Show loader until bookData is fetched
     if (bookData == null) {
       return const Scaffold(
+        backgroundColor: Color(0xFFeeeeee), // ✅ Match this color
         body: Center(child: CircularProgressIndicator()),
       );
     }
 
-    // Get book details
-    final book = bookData.data() as Map<String, dynamic>;
+    // Get book details safely
+    final book = bookData!.data() as Map<String, dynamic>;
 
     return Scaffold(
       backgroundColor: const Color(0xFFeeeeee),
@@ -235,7 +235,6 @@ class _BookDetailPageState extends State<BookDetailPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Book Image
                     Center(
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16),
@@ -247,7 +246,9 @@ class _BookDetailPageState extends State<BookDetailPage> {
                                 fit: BoxFit.cover,
                               )
                             : const Image(
-                                image: AssetImage('assets/images/default_cover.jpg'),
+                                image: AssetImage(
+                                  'assets/images/default_cover.jpg',
+                                ),
                                 width: 200,
                                 height: 280,
                                 fit: BoxFit.cover,
@@ -255,16 +256,11 @@ class _BookDetailPageState extends State<BookDetailPage> {
                       ),
                     ),
                     const SizedBox(height: 24),
-
-                    // Title
                     Text(
-                      book['title'],
+                      book['title'] ?? 'No Title',
                       style: MyTextTheme.lightTextTheme.headlineMedium,
                     ),
-
                     const SizedBox(height: 6),
-
-                    // ✅ Author
                     if (book.containsKey('author'))
                       Text(
                         "By ${book['author']}",
@@ -274,22 +270,16 @@ class _BookDetailPageState extends State<BookDetailPage> {
                           fontStyle: FontStyle.italic,
                         ),
                       ),
-
                     const SizedBox(height: 8),
-
-                    // Category
                     Text(
-                      book['genre'],
+                      book['genre'] ?? 'Unknown',
                       style: const TextStyle(color: Colors.teal, fontSize: 16),
                     ),
-
                     const SizedBox(height: 16),
-
-                    // Price & Rating
                     Row(
                       children: [
                         Text(
-                          "\$${book['price']}",
+                          "\$${book['price'] ?? 0}",
                           style: const TextStyle(
                             color: MyColors.primary,
                             fontSize: 20,
@@ -302,7 +292,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
                             const Icon(Icons.star, color: Colors.amber),
                             const SizedBox(width: 4),
                             Text(
-                              book['rating'].toString(),
+                              book['rating']?.toString() ?? '0.0',
                               style: const TextStyle(
                                 fontWeight: FontWeight.w500,
                                 color: Colors.deepOrange,
@@ -312,10 +302,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 24),
-
-                    // Description
                     const Text(
                       "Description",
                       style: TextStyle(
@@ -329,10 +316,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
                       book['description'] ?? "No description available.",
                       style: const TextStyle(fontSize: 15, color: Colors.teal),
                     ),
-
                     const SizedBox(height: 32),
-
-                    // Add to Cart Button
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(

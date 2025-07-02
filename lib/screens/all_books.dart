@@ -208,7 +208,7 @@ class _AllBooksPageState extends State<AllBooksPage> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: StreamBuilder<QuerySnapshot>(
-                  stream: _booksStream,
+                  stream: _booksStream, // Your Stream<QuerySnapshot>
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
@@ -233,7 +233,7 @@ class _AllBooksPageState extends State<AllBooksPage> {
                     if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                       return const Center(
                         child: Text(
-                          'No all books available.',
+                          'No books available.',
                           style: TextStyle(color: MyColors.primary),
                         ),
                       );
@@ -251,16 +251,55 @@ class _AllBooksPageState extends State<AllBooksPage> {
                             childAspectRatio: 0.63,
                           ),
                       itemBuilder: (context, index) {
-                        final book =
-                            books[index].data() as Map<String, dynamic>;
-                        return BookCard(
-                          imagePath:
-                              book['cover_image_url'] ??
-                              'assets/images/appLogo.png',
-                          title: book['title'] ?? 'No Title',
-                          category: book['genre'] ?? 'No Category',
-                          price: book['price']?.toDouble() ?? 0.0,
-                          rating: book['rating']?.toDouble() ?? 0.0,
+                        final doc = books[index];
+                        final book = doc.data() as Map<String, dynamic>;
+                        final String bookId = doc.id;
+
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder:
+                                    (context, animation, secondaryAnimation) =>
+                                        BookDetailPage(bookId: bookId),
+                                transitionsBuilder:
+                                    (
+                                      context,
+                                      animation,
+                                      secondaryAnimation,
+                                      child,
+                                    ) {
+                                      const begin = Offset(0.0, 1.0);
+                                      const end = Offset.zero;
+                                      const curve = Curves.easeInOut;
+                                      final tween = Tween(
+                                        begin: begin,
+                                        end: end,
+                                      ).chain(CurveTween(curve: curve));
+                                      return SlideTransition(
+                                        position: animation.drive(tween),
+                                        child: child,
+                                      );
+                                    },
+                              ),
+                            );
+                          },
+                          child: Hero(
+                            tag: bookId,
+                            child: Material(
+                              color: Colors.transparent,
+                              child: BookCard(
+                                imagePath:
+                                    book['cover_image_url'] ??
+                                    'assets/images/appLogo.png',
+                                title: book['title'] ?? 'No Title',
+                                category: book['genre'] ?? 'No Category',
+                                price: book['price']?.toDouble() ?? 0.0,
+                                rating: book['rating']?.toDouble() ?? 0.0,
+                              ),
+                            ),
+                          ),
                         );
                       },
                     );

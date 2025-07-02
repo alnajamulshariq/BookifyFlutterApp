@@ -437,59 +437,48 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: FutureBuilder<QuerySnapshot>(
                           future: FirebaseFirestore.instance
                               .collection('books')
-                              .where(
-                                'is_featured',
-                                isEqualTo: true,
-                              ) // Fetch only featured books
+                              .where('is_featured', isEqualTo: true)
                               .get(),
                           builder: (context, snapshot) {
-                            // Show loader while data is being fetched
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
                               return const Center(
-                                child:
-                                    CircularProgressIndicator(), // Loader shown while waiting for data
+                                child: CircularProgressIndicator(),
                               );
                             }
 
-                            // Handle error during fetching data
                             if (snapshot.hasError) {
                               return Center(
                                 child: Text('Error: ${snapshot.error}'),
                               );
                             }
 
-                            // Handle case where no data is fetched or empty data exists
                             if (!snapshot.hasData ||
                                 snapshot.data!.docs.isEmpty) {
                               return const Center(
-                                child: Text(
-                                  'No featured books available.',
-                                ), // Message when no data is available
+                                child: Text('No featured books available.'),
                               );
                             }
 
-                            // Map the Firestore data into BookCards
                             List<QueryDocumentSnapshot> books =
                                 snapshot.data!.docs;
 
                             return ListView(
                               scrollDirection: Axis.horizontal,
                               children: books.take(6).map((doc) {
-                                // Only take first 6 documents
                                 var data = doc.data() as Map<String, dynamic>;
                                 String imageUrl =
                                     data['cover_image_url'] ??
                                     'assets/images/appLogo.png';
-                                String bookId =
-                                    doc.id; // Store the book's Firestore ID
+                                String bookId = doc.id;
 
                                 return GestureDetector(
                                   onTap: () {
-                                    // Navigate to the BookDetailPage with a fade transition
                                     Navigator.push(
                                       context,
                                       PageRouteBuilder(
+                                        opaque:
+                                            false, // ✅ Important to prevent black flash
                                         pageBuilder:
                                             (
                                               context,
@@ -522,17 +511,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                     );
                                   },
                                   child: Hero(
-                                    tag:
-                                        bookId, // A unique tag for each book, using the book's ID
+                                    tag: bookId,
                                     child: Material(
-                                      color: Colors
-                                          .transparent, // Ensures no default background flash
+                                      color: const Color(
+                                        0xFFeeeeee,
+                                      ), // ✅ Smooth transition bg
                                       child: BookCard(
                                         imagePath: imageUrl,
                                         title: data['title'] ?? 'No Title',
                                         category:
                                             data['genre'] ?? 'No Category',
-                                        price: data['price'] ?? 0.0,
+                                        price: data['price']?.toDouble() ?? 0.0,
                                         rating:
                                             data['rating']?.toDouble() ?? 0.0,
                                       ),
@@ -585,10 +574,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: FutureBuilder<QuerySnapshot>(
                           future: FirebaseFirestore.instance
                               .collection('books')
-                              .where(
-                                'is_popular',
-                                isEqualTo: true,
-                              ) // Fetch only featured books
+                              .where('is_popular', isEqualTo: true)
                               .get(),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
@@ -611,23 +597,73 @@ class _HomeScreenState extends State<HomeScreen> {
                               );
                             }
 
-                            // Map the Firestore data into BookCards
                             List<QueryDocumentSnapshot> books =
                                 snapshot.data!.docs;
+
                             return ListView(
                               scrollDirection: Axis.horizontal,
                               children: books.take(6).map((doc) {
-                                // Only take first 6 documents
                                 var data = doc.data() as Map<String, dynamic>;
                                 String imageUrl =
                                     data['cover_image_url'] ??
                                     'assets/images/appLogo.png';
-                                return BookCard(
-                                  imagePath: imageUrl,
-                                  title: data['title'] ?? 'No Title',
-                                  category: data['genre'] ?? 'No Category',
-                                  price: data['price'] ?? 0.0,
-                                  rating: data['rating']?.toDouble() ?? 0.0,
+                                String bookId = doc.id;
+
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      PageRouteBuilder(
+                                        opaque:
+                                            false, // ✅ Important to prevent black flash
+                                        pageBuilder:
+                                            (
+                                              context,
+                                              animation,
+                                              secondaryAnimation,
+                                            ) => BookDetailPage(bookId: bookId),
+                                        transitionsBuilder:
+                                            (
+                                              context,
+                                              animation,
+                                              secondaryAnimation,
+                                              child,
+                                            ) {
+                                              const begin = Offset(0.0, 1.0);
+                                              const end = Offset.zero;
+                                              const curve = Curves.easeInOut;
+                                              var tween = Tween(
+                                                begin: begin,
+                                                end: end,
+                                              ).chain(CurveTween(curve: curve));
+                                              var offsetAnimation = animation
+                                                  .drive(tween);
+
+                                              return SlideTransition(
+                                                position: offsetAnimation,
+                                                child: child,
+                                              );
+                                            },
+                                      ),
+                                    );
+                                  },
+                                  child: Hero(
+                                    tag: bookId,
+                                    child: Material(
+                                      color: const Color(
+                                        0xFFeeeeee,
+                                      ), // ✅ Smooth transition bg
+                                      child: BookCard(
+                                        imagePath: imageUrl,
+                                        title: data['title'] ?? 'No Title',
+                                        category:
+                                            data['genre'] ?? 'No Category',
+                                        price: data['price']?.toDouble() ?? 0.0,
+                                        rating:
+                                            data['rating']?.toDouble() ?? 0.0,
+                                      ),
+                                    ),
+                                  ),
                                 );
                               }).toList(),
                             );
@@ -675,10 +711,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: FutureBuilder<QuerySnapshot>(
                           future: FirebaseFirestore.instance
                               .collection('books')
-                              .where(
-                                'is_best_selling',
-                                isEqualTo: true,
-                              ) // Fetch only featured books
+                              .where('is_best_selling', isEqualTo: true)
                               .get(),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
@@ -701,23 +734,73 @@ class _HomeScreenState extends State<HomeScreen> {
                               );
                             }
 
-                            // Map the Firestore data into BookCards
                             List<QueryDocumentSnapshot> books =
                                 snapshot.data!.docs;
+
                             return ListView(
                               scrollDirection: Axis.horizontal,
                               children: books.take(6).map((doc) {
-                                // Only take first 6 documents
                                 var data = doc.data() as Map<String, dynamic>;
                                 String imageUrl =
                                     data['cover_image_url'] ??
                                     'assets/images/appLogo.png';
-                                return BookCard(
-                                  imagePath: imageUrl,
-                                  title: data['title'] ?? 'No Title',
-                                  category: data['genre'] ?? 'No Category',
-                                  price: data['price'] ?? 0.0,
-                                  rating: data['rating']?.toDouble() ?? 0.0,
+                                String bookId = doc.id;
+
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      PageRouteBuilder(
+                                        opaque:
+                                            false, // ✅ Important to prevent black flash
+                                        pageBuilder:
+                                            (
+                                              context,
+                                              animation,
+                                              secondaryAnimation,
+                                            ) => BookDetailPage(bookId: bookId),
+                                        transitionsBuilder:
+                                            (
+                                              context,
+                                              animation,
+                                              secondaryAnimation,
+                                              child,
+                                            ) {
+                                              const begin = Offset(0.0, 1.0);
+                                              const end = Offset.zero;
+                                              const curve = Curves.easeInOut;
+                                              var tween = Tween(
+                                                begin: begin,
+                                                end: end,
+                                              ).chain(CurveTween(curve: curve));
+                                              var offsetAnimation = animation
+                                                  .drive(tween);
+
+                                              return SlideTransition(
+                                                position: offsetAnimation,
+                                                child: child,
+                                              );
+                                            },
+                                      ),
+                                    );
+                                  },
+                                  child: Hero(
+                                    tag: bookId,
+                                    child: Material(
+                                      color: const Color(
+                                        0xFFeeeeee,
+                                      ), // ✅ Smooth transition bg
+                                      child: BookCard(
+                                        imagePath: imageUrl,
+                                        title: data['title'] ?? 'No Title',
+                                        category:
+                                            data['genre'] ?? 'No Category',
+                                        price: data['price']?.toDouble() ?? 0.0,
+                                        rating:
+                                            data['rating']?.toDouble() ?? 0.0,
+                                      ),
+                                    ),
+                                  ),
                                 );
                               }).toList(),
                             );
@@ -783,27 +866,77 @@ class _HomeScreenState extends State<HomeScreen> {
                             if (!snapshot.hasData ||
                                 snapshot.data!.docs.isEmpty) {
                               return const Center(
-                                child: Text('No best selling books available.'),
+                                child: Text('No books available.'),
                               );
                             }
 
-                            // Map the Firestore data into BookCards
                             List<QueryDocumentSnapshot> books =
                                 snapshot.data!.docs;
+
                             return ListView(
                               scrollDirection: Axis.horizontal,
                               children: books.take(6).map((doc) {
-                                // Only take first 6 documents
                                 var data = doc.data() as Map<String, dynamic>;
                                 String imageUrl =
                                     data['cover_image_url'] ??
                                     'assets/images/appLogo.png';
-                                return BookCard(
-                                  imagePath: imageUrl,
-                                  title: data['title'] ?? 'No Title',
-                                  category: data['genre'] ?? 'No Category',
-                                  price: data['price'] ?? 0.0,
-                                  rating: data['rating']?.toDouble() ?? 0.0,
+                                String bookId = doc.id;
+
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      PageRouteBuilder(
+                                        opaque:
+                                            false, // ✅ Important to prevent black flash
+                                        pageBuilder:
+                                            (
+                                              context,
+                                              animation,
+                                              secondaryAnimation,
+                                            ) => BookDetailPage(bookId: bookId),
+                                        transitionsBuilder:
+                                            (
+                                              context,
+                                              animation,
+                                              secondaryAnimation,
+                                              child,
+                                            ) {
+                                              const begin = Offset(0.0, 1.0);
+                                              const end = Offset.zero;
+                                              const curve = Curves.easeInOut;
+                                              var tween = Tween(
+                                                begin: begin,
+                                                end: end,
+                                              ).chain(CurveTween(curve: curve));
+                                              var offsetAnimation = animation
+                                                  .drive(tween);
+
+                                              return SlideTransition(
+                                                position: offsetAnimation,
+                                                child: child,
+                                              );
+                                            },
+                                      ),
+                                    );
+                                  },
+                                  child: Hero(
+                                    tag: bookId,
+                                    child: Material(
+                                      color: const Color(
+                                        0xFFeeeeee,
+                                      ), // ✅ Smooth transition bg
+                                      child: BookCard(
+                                        imagePath: imageUrl,
+                                        title: data['title'] ?? 'No Title',
+                                        category:
+                                            data['genre'] ?? 'No Category',
+                                        price: data['price']?.toDouble() ?? 0.0,
+                                        rating:
+                                            data['rating']?.toDouble() ?? 0.0,
+                                      ),
+                                    ),
+                                  ),
                                 );
                               }).toList(),
                             );
