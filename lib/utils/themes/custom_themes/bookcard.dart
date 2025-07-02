@@ -45,7 +45,7 @@ class _BookCardState extends State<BookCard> {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.asset(
+                child: Image.network(
                   widget.imagePath,
                   height: 160,
                   width: double.infinity,

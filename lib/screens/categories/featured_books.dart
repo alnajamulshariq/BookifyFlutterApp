@@ -221,13 +221,296 @@
 //   }
 // }
 
+// import 'package:bookify/screens/auth/users/sign_in.dart';
+// import 'package:bookify/utils/constants/colors.dart';
+// import 'package:bookify/utils/themes/custom_themes/app_navbar.dart';
+// import 'package:bookify/utils/themes/custom_themes/bookcard.dart';
+// import 'package:bookify/utils/themes/custom_themes/text_theme.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:flutter/material.dart';
+
+// class FeaturedPage extends StatefulWidget {
+//   const FeaturedPage({super.key});
+
+//   @override
+//   State<FeaturedPage> createState() => _FeaturedPageState();
+// }
+
+// class _FeaturedPageState extends State<FeaturedPage> {
+//   final auth = FirebaseAuth.instance;
+//   String _currentSortField = 'title';
+//   bool _isDescending = false;
+//   late Stream<QuerySnapshot> _booksStream;
+
+//   final List<String> categories = [
+//     'Novels',
+//     'Self Love',
+//     'Science',
+//     'Romance',
+//     'History',
+//     'Fantasy',
+//     'Poetry',
+//     'Action',
+//   ];
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _updateStream();
+//   }
+
+//   void _updateStream() {
+//     _booksStream = FirebaseFirestore.instance
+//         .collection('books')
+//         .where('is_featured', isEqualTo: true)
+//         .orderBy(_currentSortField, descending: _isDescending)
+//         .snapshots();
+//   }
+
+//   void navigateToCategory(String title) {
+//     final routes = {
+//       'Novels': '/novels',
+//       'Self Love': '/self-love',
+//       'Science': '/science',
+//       'Romance': '/romance',
+//       'History': '/history',
+//       'Fantasy': '/fantasy',
+//       'Poetry': '/poetry',
+//       'Action': '/action',
+//     };
+//     if (routes.containsKey(title)) {
+//       Navigator.pushNamed(context, routes[title]!);
+//     } else {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(content: Text("No page found for category: $title")),
+//       );
+//     }
+//   }
+
+//   void sortBooks(String criteria) {
+//     setState(() {
+//       switch (criteria) {
+//         case "Price: Low to High":
+//           _currentSortField = 'price';
+//           _isDescending = false;
+//           break;
+//         case "Price: High to Low":
+//           _currentSortField = 'price';
+//           _isDescending = true;
+//           break;
+//         case "Top Rated":
+//           _currentSortField = 'rating';
+//           _isDescending = true;
+//           break;
+//         default:
+//           _currentSortField = 'title';
+//           _isDescending = false;
+//       }
+//       _updateStream();
+//     });
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: const Color(0xFFeeeeee),
+//       body: SafeArea(
+//         child: Column(
+//           children: [
+//             const SizedBox(height: 30),
+//             const CustomNavBar(),
+//             const SizedBox(height: 10),
+
+//             // Categories List
+//             Padding(
+//               padding: const EdgeInsets.all(16.0),
+//               child: SizedBox(
+//                 height: 45,
+//                 child: ListView.builder(
+//                   scrollDirection: Axis.horizontal,
+//                   itemCount: categories.length,
+//                   itemBuilder: (context, index) {
+//                     return Padding(
+//                       padding: const EdgeInsets.only(right: 10),
+//                       child: GestureDetector(
+//                         onTap: () => navigateToCategory(categories[index]),
+//                         child: Container(
+//                           padding: const EdgeInsets.symmetric(
+//                             horizontal: 16,
+//                             vertical: 10,
+//                           ),
+//                           decoration: BoxDecoration(
+//                             color: const Color.fromARGB(129, 178, 223, 219),
+//                             borderRadius: BorderRadius.circular(25),
+//                             border: Border.all(
+//                               color: const Color.fromARGB(129, 178, 223, 219),
+//                             ),
+//                           ),
+//                           child: Text(
+//                             categories[index],
+//                             style: const TextStyle(
+//                               color: MyColors.primary,
+//                               fontWeight: FontWeight.w500,
+//                             ),
+//                           ),
+//                         ),
+//                       ),
+//                     );
+//                   },
+//                 ),
+//               ),
+//             ),
+
+//             // Filter + Title Row
+//             Padding(
+//               padding: const EdgeInsets.symmetric(horizontal: 16.0),
+//               child: Row(
+//                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                 children: [
+//                   Text(
+//                     "Featured Books",
+//                     style: MyTextTheme.lightTextTheme.headlineMedium,
+//                   ),
+//                   Theme(
+//                     data: Theme.of(context).copyWith(
+//                       popupMenuTheme: const PopupMenuThemeData(
+//                         color: Colors.white,
+//                         surfaceTintColor: Colors.transparent,
+//                         textStyle: TextStyle(
+//                           color: Colors.teal,
+//                           fontWeight: FontWeight.w600,
+//                         ),
+//                       ),
+//                     ),
+//                     child: PopupMenuButton<String>(
+//                       icon: Icon(Icons.filter_list, color: MyColors.primary),
+//                       onSelected: sortBooks,
+//                       itemBuilder: (context) => const [
+//                         PopupMenuItem(
+//                           value: "Price: Low to High",
+//                           child: Text(
+//                             "Price: Low to High",
+//                             style: TextStyle(
+//                               color: Colors.teal,
+//                               fontWeight: FontWeight.w600,
+//                             ),
+//                           ),
+//                         ),
+//                         PopupMenuItem(
+//                           value: "Price: High to Low",
+//                           child: Text(
+//                             "Price: High to Low",
+//                             style: TextStyle(
+//                               color: Colors.teal,
+//                               fontWeight: FontWeight.w600,
+//                             ),
+//                           ),
+//                         ),
+//                         PopupMenuItem(
+//                           value: "Top Rated",
+//                           child: Text(
+//                             "Top Rated",
+//                             style: TextStyle(
+//                               color: Colors.teal,
+//                               fontWeight: FontWeight.w600,
+//                             ),
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+
+//             const SizedBox(height: 20),
+
+//             // Dynamic Books Grid from Firestore
+//             Expanded(
+//               child: Padding(
+//                 padding: const EdgeInsets.symmetric(horizontal: 16),
+//                 child: StreamBuilder<QuerySnapshot>(
+//                   stream: _booksStream,
+//                   builder: (context, snapshot) {
+//                     if (snapshot.connectionState == ConnectionState.waiting) {
+//                       return const Center(child: CircularProgressIndicator());
+//                     }
+
+//                     if (snapshot.hasError) {
+//                       debugPrint('Firestore Error: ${snapshot.error}');
+//                       return Center(
+//                         child: Column(
+//                           mainAxisAlignment: MainAxisAlignment.center,
+//                           children: [
+//                             const Text('Failed to load books'),
+//                             ElevatedButton(
+//                               onPressed: _updateStream,
+//                               child: const Text('Retry'),
+//                             ),
+//                           ],
+//                         ),
+//                       );
+//                     }
+
+//                     if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+//                       return const Center(
+//                         child: Text(
+//                           'No featured books available.',
+//                           style: TextStyle(color: MyColors.primary),
+//                         ),
+//                       );
+//                     }
+
+//                     final books = snapshot.data!.docs;
+
+//                     return GridView.builder(
+//                       itemCount: books.length,
+//                       gridDelegate:
+//                           const SliverGridDelegateWithFixedCrossAxisCount(
+//                             crossAxisCount: 2,
+//                             crossAxisSpacing: 16,
+//                             mainAxisSpacing: 20,
+//                             childAspectRatio: 0.63,
+//                           ),
+//                       itemBuilder: (context, index) {
+//                         final book =
+//                             books[index].data() as Map<String, dynamic>;
+//                         return BookCard(
+//                           imagePath:
+//                               book['cover_image_url'] ??
+//                               'assets/images/appLogo.png',
+//                           title: book['title'] ?? 'No Title',
+//                           category: book['genre'] ?? 'No Category',
+//                           price: book['price']?.toDouble() ?? 0.0,
+//                           rating: book['rating']?.toDouble() ?? 0.0,
+//                         );
+//                       },
+//                     );
+//                   },
+//                 ),
+//               ),
+//             ),
+//             const SizedBox(height: 10),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+
+
+
 import 'package:bookify/screens/auth/users/sign_in.dart';
 import 'package:bookify/utils/constants/colors.dart';
 import 'package:bookify/utils/themes/custom_themes/app_navbar.dart';
 import 'package:bookify/utils/themes/custom_themes/bookcard.dart';
 import 'package:bookify/utils/themes/custom_themes/text_theme.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:bookify/screens/book_detail_page.dart';  // Import the BookDetailPage
 
 class FeaturedPage extends StatefulWidget {
   const FeaturedPage({super.key});
@@ -238,120 +521,55 @@ class FeaturedPage extends StatefulWidget {
 
 class _FeaturedPageState extends State<FeaturedPage> {
   final auth = FirebaseAuth.instance;
+  String _currentSortField = 'title';
+  bool _isDescending = false;
+  late Stream<QuerySnapshot> _booksStream;
 
-  final List<Map<String, dynamic>> books = [
-    {
-      'imagePath': 'assets/images/thespidy.jpg',
-      'title': 'Atomic Habits',
-      'category': 'Self Help',
-      'price': 58.10,
-      'rating': 4.7,
-    },
-    {
-      'imagePath': 'assets/images/thespidy.jpg',
-      'title': 'The Art of War',
-      'category': 'Strategy',
-      'price': 72.10,
-      'rating': 4.4,
-    },
-    {
-      'imagePath': 'assets/images/thespidy.jpg',
-      'title': 'Rich Dad Poor Dad',
-      'category': 'Finance',
-      'price': 65.10,
-      'rating': 4.5,
-    },
-    {
-      'imagePath': 'assets/images/thespidy.jpg',
-      'title': 'The Alchemist',
-      'category': 'Fiction',
-      'price': 70.10,
-      'rating': 4.6,
-    },
-    {
-      'imagePath': 'assets/images/thespidy.jpg',
-      'title': 'Atomic Habits',
-      'category': 'Self Help',
-      'price': 58.10,
-      'rating': 4.7,
-    },
-    {
-      'imagePath': 'assets/images/thespidy.jpg',
-      'title': 'The Art of War',
-      'category': 'Strategy',
-      'price': 72.10,
-      'rating': 4.4,
-    },
-    {
-      'imagePath': 'assets/images/thespidy.jpg',
-      'title': 'Rich Dad Poor Dad',
-      'category': 'Finance',
-      'price': 65.10,
-      'rating': 4.5,
-    },
-    {
-      'imagePath': 'assets/images/thespidy.jpg',
-      'title': 'The Alchemist',
-      'category': 'Fiction',
-      'price': 70.10,
-      'rating': 4.6,
-    },
-    {
-      'imagePath': 'assets/images/thespidy.jpg',
-      'title': 'Rich Dad Poor Dad',
-      'category': 'Finance',
-      'price': 65.10,
-      'rating': 4.5,
-    },
-    {
-      'imagePath': 'assets/images/thespidy.jpg',
-      'title': 'The Alchemist',
-      'category': 'Fiction',
-      'price': 70.10,
-      'rating': 4.6,
-    },
-  ];
-
-  final List<String> categories = [
-    'Novels',
-    'Self Love',
-    'Science',
-    'Romance',
-    'History',
-    'Fantasy',
-    'Poetry',
-    'Action',
-  ];
-
-  void navigateToCategory(String title) {
-    final routes = {
-      'Novels': '/novels',
-      'Self Love': '/self-love',
-      'Science': '/science',
-      'Romance': '/romance',
-      'History': '/history',
-      'Fantasy': '/fantasy',
-      'Poetry': '/poetry',
-      'Action': '/action',
-    };
-    if (routes.containsKey(title)) {
-      Navigator.pushNamed(context, routes[title]!);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("No page found for category: $title")),
-      );
-    }
+  @override
+  void initState() {
+    super.initState();
+    _updateStream();
   }
 
+  void _updateStream() {
+    _booksStream = FirebaseFirestore.instance
+        .collection('books')
+        .where('is_featured', isEqualTo: true)
+        .orderBy(_currentSortField, descending: _isDescending)
+        .snapshots();
+  }
+
+  // Navigate to book detail page with the book ID
+  void navigateToBookDetail(String bookId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BookDetailPage(bookId: bookId),  // Pass bookId to BookDetailPage
+      ),
+    );
+  }
+
+  // Sort books function
   void sortBooks(String criteria) {
     setState(() {
-      if (criteria == "Price: Low to High") {
-        books.sort((a, b) => a['price'].compareTo(b['price']));
-      } else if (criteria == "Price: High to Low") {
-        books.sort((a, b) => b['price'].compareTo(a['price']));
-      } else if (criteria == "Top Rated") {
-        books.sort((a, b) => b['rating'].compareTo(a['rating']));
+      switch (criteria) {
+        case "Price: Low to High":
+          _currentSortField = 'price';
+          _isDescending = false;
+          break;
+        case "Price: High to Low":
+          _currentSortField = 'price';
+          _isDescending = true;
+          break;
+        case "Top Rated":
+          _currentSortField = 'rating';
+          _isDescending = true;
+          break;
+        default:
+          _currentSortField = 'title';
+          _isDescending = false;
       }
+      _updateStream();
     });
   }
 
@@ -364,21 +582,23 @@ class _FeaturedPageState extends State<FeaturedPage> {
           children: [
             const SizedBox(height: 30),
             const CustomNavBar(),
-
             const SizedBox(height: 10),
 
+            // Categories List
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: SizedBox(
                 height: 45,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: categories.length,
+                  itemCount: 8, // categories.length,
                   itemBuilder: (context, index) {
                     return Padding(
                       padding: const EdgeInsets.only(right: 10),
                       child: GestureDetector(
-                        onTap: () => navigateToCategory(categories[index]),
+                        onTap: () {
+                          // Handle category navigation
+                        },
                         child: Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 16,
@@ -388,11 +608,11 @@ class _FeaturedPageState extends State<FeaturedPage> {
                             color: const Color.fromARGB(129, 178, 223, 219),
                             borderRadius: BorderRadius.circular(25),
                             border: Border.all(
-                              color: Color.fromARGB(129, 178, 223, 219),
+                              color: const Color.fromARGB(129, 178, 223, 219),
                             ),
                           ),
                           child: Text(
-                            categories[index],
+                            'Category',  // categories[index],
                             style: const TextStyle(
                               color: MyColors.primary,
                               fontWeight: FontWeight.w500,
@@ -406,7 +626,7 @@ class _FeaturedPageState extends State<FeaturedPage> {
               ),
             ),
 
-            /// Filter + Title Row
+            // Filter + Title Row
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
@@ -418,12 +638,11 @@ class _FeaturedPageState extends State<FeaturedPage> {
                   ),
                   Theme(
                     data: Theme.of(context).copyWith(
-                      popupMenuTheme: PopupMenuThemeData(
-                        color: Colors.white, // ✅ Popup background color
-                        surfaceTintColor:
-                            Colors.transparent, // Prevents dark blending
-                        textStyle: const TextStyle(
-                          color: Colors.teal, // ✅ Your themed text color
+                      popupMenuTheme: const PopupMenuThemeData(
+                        color: Colors.white,
+                        surfaceTintColor: Colors.transparent,
+                        textStyle: TextStyle(
+                          color: Colors.teal,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -471,26 +690,72 @@ class _FeaturedPageState extends State<FeaturedPage> {
 
             const SizedBox(height: 20),
 
-            /// Grid of Books
+            // Dynamic Books Grid from Firestore
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: GridView.builder(
-                  itemCount: books.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 20,
-                    childAspectRatio: 0.63,
-                  ),
-                  itemBuilder: (context, index) {
-                    final book = books[index];
-                    return BookCard(
-                      imagePath: book['imagePath'],
-                      title: book['title'],
-                      category: book['category'],
-                      price: book['price'],
-                      rating: book['rating'],
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: _booksStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (snapshot.hasError) {
+                      debugPrint('Firestore Error: ${snapshot.error}');
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text('Failed to load books'),
+                            ElevatedButton(
+                              onPressed: _updateStream,
+                              child: const Text('Retry'),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return const Center(
+                        child: Text(
+                          'No featured books available.',
+                          style: TextStyle(color: MyColors.primary),
+                        ),
+                      );
+                    }
+
+                    final books = snapshot.data!.docs;
+
+                    return GridView.builder(
+                      itemCount: books.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 16,
+                            mainAxisSpacing: 20,
+                            childAspectRatio: 0.63,
+                          ),
+                      itemBuilder: (context, index) {
+                        final book =
+                            books[index].data() as Map<String, dynamic>;
+
+                        // Book Card with OnTap to Navigate to Detail Page
+                        return GestureDetector(
+                          onTap: () {
+                            navigateToBookDetail(books[index].id);  // Pass bookId to BookDetailPage
+                          },
+                          child: BookCard(
+                            imagePath: book['cover_image_url'] ??
+                                'assets/images/appLogo.png',
+                            title: book['title'] ?? 'No Title',
+                            category: book['genre'] ?? 'No Category',
+                            price: book['price']?.toDouble() ?? 0.0,
+                            rating: book['rating']?.toDouble() ?? 0.0,
+                          ),
+                        );
+                      },
                     );
                   },
                 ),

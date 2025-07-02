@@ -32,7 +32,10 @@ class _CustomNavBarState extends State<CustomNavBar> {
     final uid = user?.uid;
     if (uid != null) {
       try {
-        final doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+        final doc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(uid)
+            .get();
         final data = doc.data();
         if (data != null) {
           setState(() {
@@ -59,10 +62,20 @@ class _CustomNavBarState extends State<CustomNavBar> {
             children: [
               ClipOval(
                 child: (profileImage.isNotEmpty)
-                    ? Image.network(profileImage, width: 40, height: 40, fit: BoxFit.cover)
+                    ? Image.network(
+                        profileImage,
+                        width: 40,
+                        height: 40,
+                        fit: BoxFit.cover,
+                      )
                     : (user?.photoURL != null)
-                        ? Image.network(user!.photoURL!, width: 40, height: 40, fit: BoxFit.cover)
-                        : const Icon(Icons.person, size: 40, color: Colors.grey),
+                    ? Image.network(
+                        user!.photoURL!,
+                        width: 40,
+                        height: 40,
+                        fit: BoxFit.cover,
+                      )
+                    : const Icon(Icons.person, size: 40, color: Colors.grey),
               ),
               const SizedBox(width: 10),
               Column(
@@ -74,7 +87,11 @@ class _CustomNavBarState extends State<CustomNavBar> {
                   ),
                   const Text(
                     "Have a nice day",
-                    style: TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.w500),
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ],
               ),
@@ -85,7 +102,11 @@ class _CustomNavBarState extends State<CustomNavBar> {
                     _showSearchBar = !_showSearchBar;
                   });
                 },
-                child: Icon(Icons.search_rounded, color: MyColors.primary, size: 30),
+                child: Icon(
+                  Icons.search_rounded,
+                  color: MyColors.primary,
+                  size: 30,
+                ),
               ),
               const SizedBox(width: 10),
               InkWell(
@@ -112,7 +133,9 @@ class _CustomNavBarState extends State<CustomNavBar> {
                 hintText: "Search...",
                 hintStyle: const TextStyle(color: Colors.grey),
                 prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 filled: true,
                 fillColor: Colors.white,
               ),

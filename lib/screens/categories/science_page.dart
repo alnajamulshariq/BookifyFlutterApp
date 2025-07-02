@@ -3,6 +3,7 @@ import 'package:bookify/utils/constants/colors.dart';
 import 'package:bookify/utils/themes/custom_themes/app_navbar.dart';
 import 'package:bookify/utils/themes/custom_themes/bookcard.dart';
 import 'package:bookify/utils/themes/custom_themes/text_theme.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -15,78 +16,9 @@ class SciencePage extends StatefulWidget {
 
 class _SciencePageState extends State<SciencePage> {
   final auth = FirebaseAuth.instance;
-  final List<Map<String, dynamic>> books = [
-    {
-      'imagePath': 'assets/images/thespidy.jpg',
-      'title': 'Atomic Habits',
-      'category': 'Self Help',
-      'price': 58.01,
-      'rating': 4.7,
-    },
-    {
-      'imagePath': 'assets/images/thespidy.jpg',
-      'title': 'The Art of War',
-      'category': 'Strategy',
-      'price': 72.01,
-      'rating': 4.4,
-    },
-    {
-      'imagePath': 'assets/images/thespidy.jpg',
-      'title': 'Rich Dad Poor Dad',
-      'category': 'Finance',
-      'price': 65.01,
-      'rating': 4.5,
-    },
-    {
-      'imagePath': 'assets/images/thespidy.jpg',
-      'title': 'The Alchemist',
-      'category': 'Fiction',
-      'price': 70.01,
-      'rating': 4.6,
-    },
-    {
-      'imagePath': 'assets/images/thespidy.jpg',
-      'title': 'Atomic Habits',
-      'category': 'Self Help',
-      'price': 58.01,
-      'rating': 4.7,
-    },
-    {
-      'imagePath': 'assets/images/thespidy.jpg',
-      'title': 'The Art of War',
-      'category': 'Strategy',
-      'price': 72.01,
-      'rating': 4.4,
-    },
-    {
-      'imagePath': 'assets/images/thespidy.jpg',
-      'title': 'Rich Dad Poor Dad',
-      'category': 'Finance',
-      'price': 65.01,
-      'rating': 4.5,
-    },
-    {
-      'imagePath': 'assets/images/thespidy.jpg',
-      'title': 'The Alchemist',
-      'category': 'Fiction',
-      'price': 70.01,
-      'rating': 4.6,
-    },
-    {
-      'imagePath': 'assets/images/thespidy.jpg',
-      'title': 'Rich Dad Poor Dad',
-      'category': 'Finance',
-      'price': 65.01,
-      'rating': 4.5,
-    },
-    {
-      'imagePath': 'assets/images/thespidy.jpg',
-      'title': 'The Alchemist',
-      'category': 'Fiction',
-      'price': 70.01,
-      'rating': 4.6,
-    },
-  ];
+  String _currentSortField = 'title';
+  bool _isDescending = false;
+  late Stream<QuerySnapshot> _booksStream;
 
   final List<String> categories = [
     'Novels',
@@ -98,6 +30,20 @@ class _SciencePageState extends State<SciencePage> {
     'Poetry',
     'Action',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _updateStream();
+  }
+
+  void _updateStream() {
+    _booksStream = FirebaseFirestore.instance
+        .collection('books')
+        .where('genre', isEqualTo: "Science")
+        .orderBy(_currentSortField, descending: _isDescending)
+        .snapshots();
+  }
 
   void navigateToCategory(String title) {
     final routes = {
@@ -121,13 +67,24 @@ class _SciencePageState extends State<SciencePage> {
 
   void sortBooks(String criteria) {
     setState(() {
-      if (criteria == "Price: Low to High") {
-        books.sort((a, b) => a['price'].compareTo(b['price']));
-      } else if (criteria == "Price: High to Low") {
-        books.sort((a, b) => b['price'].compareTo(a['price']));
-      } else if (criteria == "Top Rated") {
-        books.sort((a, b) => b['rating'].compareTo(a['rating']));
+      switch (criteria) {
+        case "Price: Low to High":
+          _currentSortField = 'price';
+          _isDescending = false;
+          break;
+        case "Price: High to Low":
+          _currentSortField = 'price';
+          _isDescending = true;
+          break;
+        case "Top Rated":
+          _currentSortField = 'rating';
+          _isDescending = true;
+          break;
+        default:
+          _currentSortField = 'title';
+          _isDescending = false;
       }
+      _updateStream();
     });
   }
 
@@ -142,6 +99,7 @@ class _SciencePageState extends State<SciencePage> {
             const CustomNavBar(),
             const SizedBox(height: 10),
 
+            // Categories List
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: SizedBox(
@@ -163,7 +121,7 @@ class _SciencePageState extends State<SciencePage> {
                             color: const Color.fromARGB(129, 178, 223, 219),
                             borderRadius: BorderRadius.circular(25),
                             border: Border.all(
-                              color: Color.fromARGB(129, 178, 223, 219),
+                              color: const Color.fromARGB(129, 178, 223, 219),
                             ),
                           ),
                           child: Text(
@@ -181,7 +139,7 @@ class _SciencePageState extends State<SciencePage> {
               ),
             ),
 
-            /// Filter + Title Row
+            // Filter + Title Row
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
@@ -193,12 +151,11 @@ class _SciencePageState extends State<SciencePage> {
                   ),
                   Theme(
                     data: Theme.of(context).copyWith(
-                      popupMenuTheme: PopupMenuThemeData(
-                        color: Colors.white, // ✅ Popup background color
-                        surfaceTintColor:
-                            Colors.transparent, // Prevents dark blending
-                        textStyle: const TextStyle(
-                          color: Colors.teal, // ✅ Your themed text color
+                      popupMenuTheme: const PopupMenuThemeData(
+                        color: Colors.white,
+                        surfaceTintColor: Colors.transparent,
+                        textStyle: TextStyle(
+                          color: Colors.teal,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -246,26 +203,66 @@ class _SciencePageState extends State<SciencePage> {
 
             const SizedBox(height: 20),
 
-            /// Grid of Books
+            // Dynamic Books Grid from Firestore
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: GridView.builder(
-                  itemCount: books.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 20,
-                    childAspectRatio: 0.63,
-                  ),
-                  itemBuilder: (context, index) {
-                    final book = books[index];
-                    return BookCard(
-                      imagePath: book['imagePath'],
-                      title: book['title'],
-                      category: book['category'],
-                      price: book['price'],
-                      rating: book['rating'],
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: _booksStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (snapshot.hasError) {
+                      debugPrint('Firestore Error: ${snapshot.error}');
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text('Failed to load books'),
+                            ElevatedButton(
+                              onPressed: _updateStream,
+                              child: const Text('Retry'),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return const Center(
+                        child: Text(
+                          'No Science Books available.',
+                          style: TextStyle(color: MyColors.primary),
+                        ),
+                      );
+                    }
+
+                    final books = snapshot.data!.docs;
+
+                    return GridView.builder(
+                      itemCount: books.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 16,
+                            mainAxisSpacing: 20,
+                            childAspectRatio: 0.63,
+                          ),
+                      itemBuilder: (context, index) {
+                        final book =
+                            books[index].data() as Map<String, dynamic>;
+                        return BookCard(
+                          imagePath:
+                              book['cover_image_url'] ??
+                              'assets/images/appLogo.png',
+                          title: book['title'] ?? 'No Title',
+                          category: book['genre'] ?? 'No Category',
+                          price: book['price']?.toDouble() ?? 0.0,
+                          rating: book['rating']?.toDouble() ?? 0.0,
+                        );
+                      },
                     );
                   },
                 ),

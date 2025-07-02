@@ -1,5 +1,6 @@
 import 'package:bookify/screens/all_books.dart';
 import 'package:bookify/screens/auth/users/sign_in.dart';
+import 'package:bookify/screens/book_detail_page.dart';
 import 'package:bookify/screens/categories/best_seller.dart';
 import 'package:bookify/screens/categories/featured_books.dart';
 import 'package:bookify/screens/categories/popular_books.dart';
@@ -111,104 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             const SizedBox(height: 30),
             const CustomNavBar(),
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            //   child: Row(
-            //     children: [
-            //       // if (user?.photoURL != null)
-            //       ClipOval(
-            //         child: (profileImage.isNotEmpty)
-            //             ? Image.network(
-            //                 profileImage, // Use Firestore image URL
-            //                 width: 40,
-            //                 height: 40,
-            //                 fit: BoxFit.cover,
-            //               )
-            //             : (user?.photoURL != null)
-            //             ? Image.network(
-            //                 user!
-            //                     .photoURL!, // Use Google SignIn photo URL if available
-            //                 width: 40,
-            //                 height: 40,
-            //                 fit: BoxFit.cover,
-            //               )
-            //             : const Icon(
-            //                 // Fallback icon if no profile image is found
-            //                 Icons.person,
-            //                 size: 40,
-            //                 color: Colors.grey,
-            //               ),
-            //       ),
 
-            //       const SizedBox(width: 10),
-            //       Column(
-            //         crossAxisAlignment: CrossAxisAlignment.start,
-            //         children: [
-            //           Text(
-            //             "Hi, ${user?.displayName ?? name}",
-            //             style: MyTextTheme.lightTextTheme.titleLarge,
-            //           ),
-            //           const Text(
-            //             "Have a nice day",
-            //             style: TextStyle(
-            //               color: Colors.grey,
-            //               fontSize: 12,
-            //               fontWeight: FontWeight.w500,
-            //             ),
-            //           ),
-            //         ],
-            //       ),
-            //       const Spacer(),
-            //       InkWell(
-            //         onTap: () {
-            //           setState(() {
-            //             _showSearchBar = !_showSearchBar;
-            //           });
-            //         },
-            //         child: Icon(
-            //           Icons.search_rounded,
-            //           color: MyColors.primary,
-            //           size: 30,
-            //         ),
-            //       ),
-            //       const SizedBox(width: 10),
-            //       InkWell(
-            //         onTap: () {
-            //           auth.signOut().then((value) {
-            //             Navigator.pushReplacement(
-            //               context,
-            //               MaterialPageRoute(builder: (context) => SignIn()),
-            //             );
-            //           });
-            //         },
-            //         child: Icon(
-            //           Icons.logout,
-            //           color: MyColors.primary,
-            //           size: 30,
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
-
-            // if (_showSearchBar)
-            //   Padding(
-            //     padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-            //     child: TextField(
-            //       controller: _searchController,
-            //       style: const TextStyle(color: Colors.black),
-            //       decoration: InputDecoration(
-            //         hintText: "Search...",
-            //         hintStyle: const TextStyle(color: Colors.grey),
-            //         prefixIcon: const Icon(Icons.search, color: Colors.grey),
-            //         border: OutlineInputBorder(
-            //           borderRadius: BorderRadius.circular(12),
-            //         ),
-            //         filled: true,
-            //         fillColor: Colors.white,
-            //       ),
-            //     ),
-            //   ),
             const SizedBox(height: 10),
             Expanded(
               child: SingleChildScrollView(
@@ -396,86 +300,252 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
                       SizedBox(height: 20),
+                      // SizedBox(
+                      //   height: 260,
+                      //   child: ListView(
+                      //     scrollDirection: Axis.horizontal,
+                      //     children: const [
+                      //       BookCard(
+                      //         imagePath: 'assets/images/thespidy.jpg',
+                      //         title: 'Sun Tzu – The Art of War',
+                      //         category: 'Strategic, Fantasy',
+                      //         price: 72,
+                      //         rating: 4.4,
+                      //       ),
+                      //       BookCard(
+                      //         imagePath: 'assets/images/thespidy.jpg',
+                      //         title: 'Atomic Habits',
+                      //         category: 'Self Help',
+                      //         price: 58,
+                      //         rating: 4.7,
+                      //       ),
+                      //       BookCard(
+                      //         imagePath: 'assets/images/thespidy.jpg',
+                      //         title: 'Sun Tzu – The Art of War',
+                      //         category: 'Strategic, Fantasy',
+                      //         price: 72,
+                      //         rating: 4.4,
+                      //       ),
+                      //       BookCard(
+                      //         imagePath: 'assets/images/thespidy.jpg',
+                      //         title: 'Atomic Habits',
+                      //         category: 'Self Help',
+                      //         price: 58,
+                      //         rating: 4.7,
+                      //       ),
+                      //       BookCard(
+                      //         imagePath: 'assets/images/thespidy.jpg',
+                      //         title: 'Sun Tzu – The Art of War',
+                      //         category: 'Strategic, Fantasy',
+                      //         price: 72,
+                      //         rating: 4.4,
+                      //       ),
+                      //       BookCard(
+                      //         imagePath: 'assets/images/thespidy.jpg',
+                      //         title: 'Atomic Habits',
+                      //         category: 'Self Help',
+                      //         price: 58,
+                      //         rating: 4.7,
+                      //       ),
+                      //       BookCard(
+                      //         imagePath: 'assets/images/thespidy.jpg',
+                      //         title: 'Sun Tzu – The Art of War',
+                      //         category: 'Strategic, Fantasy',
+                      //         price: 72,
+                      //         rating: 4.4,
+                      //       ),
+                      //       BookCard(
+                      //         imagePath: 'assets/images/thespidy.jpg',
+                      //         title: 'Atomic Habits',
+                      //         category: 'Self Help',
+                      //         price: 58,
+                      //         rating: 4.7,
+                      //       ),
+                      //       BookCard(
+                      //         imagePath: 'assets/images/thespidy.jpg',
+                      //         title: 'Sun Tzu – The Art of War',
+                      //         category: 'Strategic, Fantasy',
+                      //         price: 72,
+                      //         rating: 4.4,
+                      //       ),
+                      //       BookCard(
+                      //         imagePath: 'assets/images/thespidy.jpg',
+                      //         title: 'Atomic Habits',
+                      //         category: 'Self Help',
+                      //         price: 58,
+                      //         rating: 4.7,
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
+                      // SizedBox(
+                      //   height: 260,
+                      //   child: FutureBuilder<QuerySnapshot>(
+                      //     future: FirebaseFirestore.instance
+                      //         .collection('books')
+                      //         .where(
+                      //           'is_featured',
+                      //           isEqualTo: true,
+                      //         ) // Fetch only featured books
+                      //         .get(),
+                      //     builder: (context, snapshot) {
+                      //       if (snapshot.connectionState ==
+                      //           ConnectionState.waiting) {
+                      //         return const Center(
+                      //           child: CircularProgressIndicator(),
+                      //         );
+                      //       }
+
+                      //       if (snapshot.hasError) {
+                      //         return Center(
+                      //           child: Text('Error: ${snapshot.error}'),
+                      //         );
+                      //       }
+
+                      //       if (!snapshot.hasData ||
+                      //           snapshot.data!.docs.isEmpty) {
+                      //         return const Center(
+                      //           child: Text('No featured books available.'),
+                      //         );
+                      //       }
+
+                      //       // Map the Firestore data into BookCards
+                      //       List<QueryDocumentSnapshot> books =
+                      //           snapshot.data!.docs;
+                      //       return ListView(
+                      //         scrollDirection: Axis.horizontal,
+                      //         children: books.take(6).map((doc) {
+                      //           // Only take first 6 documents
+                      //           var data = doc.data() as Map<String, dynamic>;
+                      //           String imageUrl =
+                      //               data['cover_image_url'] ??
+                      //               'assets/images/appLogo.png';
+                      //           return BookCard(
+                      //             imagePath: imageUrl,
+                      //             title: data['title'] ?? 'No Title',
+                      //             category: data['genre'] ?? 'No Category',
+                      //             price: data['price'] ?? 0.0,
+                      //             rating: data['rating']?.toDouble() ?? 0.0,
+                      //           );
+                      //         }).toList(),
+                      //       );
+                      //     },
+                      //   ),
+                      // ),
                       SizedBox(
                         height: 260,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: const [
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Sun Tzu – The Art of War',
-                              category: 'Strategic, Fantasy',
-                              price: 72,
-                              rating: 4.4,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Atomic Habits',
-                              category: 'Self Help',
-                              price: 58,
-                              rating: 4.7,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Sun Tzu – The Art of War',
-                              category: 'Strategic, Fantasy',
-                              price: 72,
-                              rating: 4.4,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Atomic Habits',
-                              category: 'Self Help',
-                              price: 58,
-                              rating: 4.7,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Sun Tzu – The Art of War',
-                              category: 'Strategic, Fantasy',
-                              price: 72,
-                              rating: 4.4,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Atomic Habits',
-                              category: 'Self Help',
-                              price: 58,
-                              rating: 4.7,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Sun Tzu – The Art of War',
-                              category: 'Strategic, Fantasy',
-                              price: 72,
-                              rating: 4.4,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Atomic Habits',
-                              category: 'Self Help',
-                              price: 58,
-                              rating: 4.7,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Sun Tzu – The Art of War',
-                              category: 'Strategic, Fantasy',
-                              price: 72,
-                              rating: 4.4,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Atomic Habits',
-                              category: 'Self Help',
-                              price: 58,
-                              rating: 4.7,
-                            ),
-                          ],
+                        child: FutureBuilder<QuerySnapshot>(
+                          future: FirebaseFirestore.instance
+                              .collection('books')
+                              .where(
+                                'is_featured',
+                                isEqualTo: true,
+                              ) // Fetch only featured books
+                              .get(),
+                          builder: (context, snapshot) {
+                            // Show loader while data is being fetched
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child:
+                                    CircularProgressIndicator(), // Loader shown while waiting for data
+                              );
+                            }
+
+                            // Handle error during fetching data
+                            if (snapshot.hasError) {
+                              return Center(
+                                child: Text('Error: ${snapshot.error}'),
+                              );
+                            }
+
+                            // Handle case where no data is fetched or empty data exists
+                            if (!snapshot.hasData ||
+                                snapshot.data!.docs.isEmpty) {
+                              return const Center(
+                                child: Text(
+                                  'No featured books available.',
+                                ), // Message when no data is available
+                              );
+                            }
+
+                            // Map the Firestore data into BookCards
+                            List<QueryDocumentSnapshot> books =
+                                snapshot.data!.docs;
+
+                            return ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: books.take(6).map((doc) {
+                                // Only take first 6 documents
+                                var data = doc.data() as Map<String, dynamic>;
+                                String imageUrl =
+                                    data['cover_image_url'] ??
+                                    'assets/images/appLogo.png';
+                                String bookId =
+                                    doc.id; // Store the book's Firestore ID
+
+                                return GestureDetector(
+                                  onTap: () {
+                                    // Navigate to the BookDetailPage with a fade transition
+                                    Navigator.push(
+                                      context,
+                                      PageRouteBuilder(
+                                        pageBuilder:
+                                            (
+                                              context,
+                                              animation,
+                                              secondaryAnimation,
+                                            ) => BookDetailPage(bookId: bookId),
+                                        transitionsBuilder:
+                                            (
+                                              context,
+                                              animation,
+                                              secondaryAnimation,
+                                              child,
+                                            ) {
+                                              const begin = Offset(0.0, 1.0);
+                                              const end = Offset.zero;
+                                              const curve = Curves.easeInOut;
+                                              var tween = Tween(
+                                                begin: begin,
+                                                end: end,
+                                              ).chain(CurveTween(curve: curve));
+                                              var offsetAnimation = animation
+                                                  .drive(tween);
+
+                                              return SlideTransition(
+                                                position: offsetAnimation,
+                                                child: child,
+                                              );
+                                            },
+                                      ),
+                                    );
+                                  },
+                                  child: Hero(
+                                    tag:
+                                        bookId, // A unique tag for each book, using the book's ID
+                                    child: Material(
+                                      color: Colors
+                                          .transparent, // Ensures no default background flash
+                                      child: BookCard(
+                                        imagePath: imageUrl,
+                                        title: data['title'] ?? 'No Title',
+                                        category:
+                                            data['genre'] ?? 'No Category',
+                                        price: data['price'] ?? 0.0,
+                                        rating:
+                                            data['rating']?.toDouble() ?? 0.0,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            );
+                          },
                         ),
                       ),
 
-                      const SizedBox(height: 30),
+                      SizedBox(height: 30),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -512,80 +582,56 @@ class _HomeScreenState extends State<HomeScreen> {
                       SizedBox(height: 20),
                       SizedBox(
                         height: 260,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: const [
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Sun Tzu – The Art of War',
-                              category: 'Strategic, Fantasy',
-                              price: 72,
-                              rating: 4.4,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Atomic Habits',
-                              category: 'Self Help',
-                              price: 58,
-                              rating: 4.7,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Sun Tzu – The Art of War',
-                              category: 'Strategic, Fantasy',
-                              price: 72,
-                              rating: 4.4,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Atomic Habits',
-                              category: 'Self Help',
-                              price: 58,
-                              rating: 4.7,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Sun Tzu – The Art of War',
-                              category: 'Strategic, Fantasy',
-                              price: 72,
-                              rating: 4.4,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Atomic Habits',
-                              category: 'Self Help',
-                              price: 58,
-                              rating: 4.7,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Sun Tzu – The Art of War',
-                              category: 'Strategic, Fantasy',
-                              price: 72,
-                              rating: 4.4,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Atomic Habits',
-                              category: 'Self Help',
-                              price: 58,
-                              rating: 4.7,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Sun Tzu – The Art of War',
-                              category: 'Strategic, Fantasy',
-                              price: 72,
-                              rating: 4.4,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Atomic Habits',
-                              category: 'Self Help',
-                              price: 58,
-                              rating: 4.7,
-                            ),
-                          ],
+                        child: FutureBuilder<QuerySnapshot>(
+                          future: FirebaseFirestore.instance
+                              .collection('books')
+                              .where(
+                                'is_popular',
+                                isEqualTo: true,
+                              ) // Fetch only featured books
+                              .get(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+
+                            if (snapshot.hasError) {
+                              return Center(
+                                child: Text('Error: ${snapshot.error}'),
+                              );
+                            }
+
+                            if (!snapshot.hasData ||
+                                snapshot.data!.docs.isEmpty) {
+                              return const Center(
+                                child: Text('No popular books available.'),
+                              );
+                            }
+
+                            // Map the Firestore data into BookCards
+                            List<QueryDocumentSnapshot> books =
+                                snapshot.data!.docs;
+                            return ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: books.take(6).map((doc) {
+                                // Only take first 6 documents
+                                var data = doc.data() as Map<String, dynamic>;
+                                String imageUrl =
+                                    data['cover_image_url'] ??
+                                    'assets/images/appLogo.png';
+                                return BookCard(
+                                  imagePath: imageUrl,
+                                  title: data['title'] ?? 'No Title',
+                                  category: data['genre'] ?? 'No Category',
+                                  price: data['price'] ?? 0.0,
+                                  rating: data['rating']?.toDouble() ?? 0.0,
+                                );
+                              }).toList(),
+                            );
+                          },
                         ),
                       ),
 
@@ -626,80 +672,56 @@ class _HomeScreenState extends State<HomeScreen> {
                       SizedBox(height: 20),
                       SizedBox(
                         height: 260,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: const [
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Sun Tzu – The Art of War',
-                              category: 'Strategic, Fantasy',
-                              price: 72,
-                              rating: 4.4,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Atomic Habits',
-                              category: 'Self Help',
-                              price: 58,
-                              rating: 4.7,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Sun Tzu – The Art of War',
-                              category: 'Strategic, Fantasy',
-                              price: 72,
-                              rating: 4.4,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Atomic Habits',
-                              category: 'Self Help',
-                              price: 58,
-                              rating: 4.7,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Sun Tzu – The Art of War',
-                              category: 'Strategic, Fantasy',
-                              price: 72,
-                              rating: 4.4,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Atomic Habits',
-                              category: 'Self Help',
-                              price: 58,
-                              rating: 4.7,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Sun Tzu – The Art of War',
-                              category: 'Strategic, Fantasy',
-                              price: 72,
-                              rating: 4.4,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Atomic Habits',
-                              category: 'Self Help',
-                              price: 58,
-                              rating: 4.7,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Sun Tzu – The Art of War',
-                              category: 'Strategic, Fantasy',
-                              price: 72,
-                              rating: 4.4,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Atomic Habits',
-                              category: 'Self Help',
-                              price: 58,
-                              rating: 4.7,
-                            ),
-                          ],
+                        child: FutureBuilder<QuerySnapshot>(
+                          future: FirebaseFirestore.instance
+                              .collection('books')
+                              .where(
+                                'is_best_selling',
+                                isEqualTo: true,
+                              ) // Fetch only featured books
+                              .get(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+
+                            if (snapshot.hasError) {
+                              return Center(
+                                child: Text('Error: ${snapshot.error}'),
+                              );
+                            }
+
+                            if (!snapshot.hasData ||
+                                snapshot.data!.docs.isEmpty) {
+                              return const Center(
+                                child: Text('No best selling books available.'),
+                              );
+                            }
+
+                            // Map the Firestore data into BookCards
+                            List<QueryDocumentSnapshot> books =
+                                snapshot.data!.docs;
+                            return ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: books.take(6).map((doc) {
+                                // Only take first 6 documents
+                                var data = doc.data() as Map<String, dynamic>;
+                                String imageUrl =
+                                    data['cover_image_url'] ??
+                                    'assets/images/appLogo.png';
+                                return BookCard(
+                                  imagePath: imageUrl,
+                                  title: data['title'] ?? 'No Title',
+                                  category: data['genre'] ?? 'No Category',
+                                  price: data['price'] ?? 0.0,
+                                  rating: data['rating']?.toDouble() ?? 0.0,
+                                );
+                              }).toList(),
+                            );
+                          },
                         ),
                       ),
 
@@ -740,80 +762,52 @@ class _HomeScreenState extends State<HomeScreen> {
                       SizedBox(height: 20),
                       SizedBox(
                         height: 260,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: const [
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Sun Tzu – The Art of War',
-                              category: 'Strategic, Fantasy',
-                              price: 72,
-                              rating: 4.4,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Atomic Habits',
-                              category: 'Self Help',
-                              price: 58,
-                              rating: 4.7,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Sun Tzu – The Art of War',
-                              category: 'Strategic, Fantasy',
-                              price: 72,
-                              rating: 4.4,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Atomic Habits',
-                              category: 'Self Help',
-                              price: 58,
-                              rating: 4.7,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Sun Tzu – The Art of War',
-                              category: 'Strategic, Fantasy',
-                              price: 72,
-                              rating: 4.4,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Atomic Habits',
-                              category: 'Self Help',
-                              price: 58,
-                              rating: 4.7,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Sun Tzu – The Art of War',
-                              category: 'Strategic, Fantasy',
-                              price: 72,
-                              rating: 4.4,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Atomic Habits',
-                              category: 'Self Help',
-                              price: 58,
-                              rating: 4.7,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Sun Tzu – The Art of War',
-                              category: 'Strategic, Fantasy',
-                              price: 72,
-                              rating: 4.4,
-                            ),
-                            BookCard(
-                              imagePath: 'assets/images/thespidy.jpg',
-                              title: 'Atomic Habits',
-                              category: 'Self Help',
-                              price: 58,
-                              rating: 4.7,
-                            ),
-                          ],
+                        child: FutureBuilder<QuerySnapshot>(
+                          future: FirebaseFirestore.instance
+                              .collection('books')
+                              .get(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+
+                            if (snapshot.hasError) {
+                              return Center(
+                                child: Text('Error: ${snapshot.error}'),
+                              );
+                            }
+
+                            if (!snapshot.hasData ||
+                                snapshot.data!.docs.isEmpty) {
+                              return const Center(
+                                child: Text('No best selling books available.'),
+                              );
+                            }
+
+                            // Map the Firestore data into BookCards
+                            List<QueryDocumentSnapshot> books =
+                                snapshot.data!.docs;
+                            return ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: books.take(6).map((doc) {
+                                // Only take first 6 documents
+                                var data = doc.data() as Map<String, dynamic>;
+                                String imageUrl =
+                                    data['cover_image_url'] ??
+                                    'assets/images/appLogo.png';
+                                return BookCard(
+                                  imagePath: imageUrl,
+                                  title: data['title'] ?? 'No Title',
+                                  category: data['genre'] ?? 'No Category',
+                                  price: data['price'] ?? 0.0,
+                                  rating: data['rating']?.toDouble() ?? 0.0,
+                                );
+                              }).toList(),
+                            );
+                          },
                         ),
                       ),
 
