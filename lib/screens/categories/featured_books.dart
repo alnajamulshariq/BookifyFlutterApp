@@ -578,10 +578,12 @@ class _FeaturedPageState extends State<FeaturedPage> {
                             child: Material(
                               color: Colors.transparent,
                               child: BookCard(
+                                bookId: doc.id,
                                 imagePath:
                                     book['cover_image_url'] ??
                                     'assets/images/appLogo.png',
                                 title: book['title'] ?? 'No Title',
+                                author: book['author'] ?? 'Unknown',
                                 category: book['genre'] ?? 'No Category',
                                 price: book['price']?.toDouble() ?? 0.0,
                                 rating: book['rating']?.toDouble() ?? 0.0,

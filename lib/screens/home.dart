@@ -517,8 +517,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                         0xFFeeeeee,
                                       ), // ✅ Smooth transition bg
                                       child: BookCard(
+                                        bookId: doc.id,
                                         imagePath: imageUrl,
                                         title: data['title'] ?? 'No Title',
+                                        author: data['author'],
                                         category:
                                             data['genre'] ?? 'No Category',
                                         price: data['price']?.toDouble() ?? 0.0,
@@ -654,8 +656,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                         0xFFeeeeee,
                                       ), // ✅ Smooth transition bg
                                       child: BookCard(
+                                        bookId: doc.id,
                                         imagePath: imageUrl,
                                         title: data['title'] ?? 'No Title',
+                                        author: data['author'],
                                         category:
                                             data['genre'] ?? 'No Category',
                                         price: data['price']?.toDouble() ?? 0.0,
@@ -791,8 +795,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                         0xFFeeeeee,
                                       ), // ✅ Smooth transition bg
                                       child: BookCard(
+                                        bookId: doc.id,
                                         imagePath: imageUrl,
                                         title: data['title'] ?? 'No Title',
+                                        author: data['author'],
                                         category:
                                             data['genre'] ?? 'No Category',
                                         price: data['price']?.toDouble() ?? 0.0,
@@ -927,8 +933,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                         0xFFeeeeee,
                                       ), // ✅ Smooth transition bg
                                       child: BookCard(
+                                        bookId: doc.id,
                                         imagePath: imageUrl,
                                         title: data['title'] ?? 'No Title',
+                                        author: data['author'],
                                         category:
                                             data['genre'] ?? 'No Category',
                                         price: data['price']?.toDouble() ?? 0.0,

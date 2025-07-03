@@ -516,6 +516,8 @@ class _BookDetailPageState extends State<BookDetailPage> {
                         ),
                         onPressed: () {
                           final item = CartItem(
+                            bookId: widget
+                                .bookId, // ✅ required for Firestore doc ID
                             title: book['title'] ?? 'No Title',
                             author: book['author'] ?? 'Unknown',
                             imageUrl: book['cover_image_url'] ?? '',
@@ -531,6 +533,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
                               content: Text('${item.title} added to cart'),
                             ),
                           );
+
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -538,6 +541,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
                             ),
                           );
                         },
+
                         child: const Text(
                           "Add to Cart",
                           style: TextStyle(fontSize: 16),
