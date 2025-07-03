@@ -1,9 +1,9 @@
-import 'package:bookify/screens/auth/users/sign_in.dart';
-import 'package:bookify/utils/constants/colors.dart';
-import 'package:bookify/utils/themes/custom_themes/app_navbar.dart';
-import 'package:bookify/utils/themes/custom_themes/text_theme.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:bookify/utils/constants/colors.dart';
+import 'package:bookify/utils/themes/custom_themes/app_navbar.dart';
 
 class UserOrders extends StatefulWidget {
   const UserOrders({super.key});
@@ -13,45 +13,36 @@ class UserOrders extends StatefulWidget {
 }
 
 class _UserOrdersState extends State<UserOrders> {
-  final auth = FirebaseAuth.instance;
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
-  // Dummy orders data
-  List<Map<String, dynamic>> userOrders = [
-    {
-      'orderId': 'ORD12345',
-      'date': '2025-06-20',
-      'total': 145.50,
-      'status': 'Delivered',
-      'books': [
-        {'title': 'Atomic Habits', 'qty': 1},
-        {'title': 'The Alchemist', 'qty': 2},
-      ],
-    },
-    {
-      'orderId': 'ORD12346',
-      'date': '2025-06-18',
-      'total': 72.00,
-      'status': 'Processing',
-      'books': [
-        {'title': 'The Art of War', 'qty': 1},
-      ],
-    },
-  ];
+  Future<void> cancelOrder(String orderId) async {
+    final uid = auth.currentUser?.uid;
+    if (uid == null) return;
 
-  void cancelOrder(int index) {
-    setState(() {
-      userOrders[index]['status'] = 'Cancelled';
-    });
-    // TODO: Add backend update call here
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('orders')
+        .doc(orderId)
+        .delete();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Order cancelled successfully.")),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final uid = auth.currentUser?.uid;
+
+    if (uid == null) {
+      return const Scaffold(body: Center(child: Text("Please log in.")));
+    }
+
     return Scaffold(
       backgroundColor: const Color(0xFFeeeeee),
       body: SafeArea(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 30),
             const CustomNavBar(),
@@ -69,105 +60,180 @@ class _UserOrdersState extends State<UserOrders> {
             ),
             const SizedBox(height: 10),
             Expanded(
-              child: ListView.builder(
-                itemCount: userOrders.length,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemBuilder: (context, index) {
-                  final order = userOrders[index];
-                  return Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    margin: const EdgeInsets.only(bottom: 16),
-                    color: Colors.white,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(uid)
+                    .collection('orders')
+                    .orderBy('orderDate', descending: true)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        "No orders yet.",
+                        style: TextStyle(color: MyColors.primary),
+                      ),
+                    );
+                  }
+
+                  final orders = snapshot.data!.docs;
+
+                  return ListView.builder(
+                    itemCount: orders.length,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemBuilder: (context, index) {
+                      final doc = orders[index];
+                      final order = doc.data() as Map<String, dynamic>;
+
+                      final orderId = doc.id;
+                      final status = order['status'] ?? 'Processing';
+                      final timestamp = order['orderDate'];
+                      final total = order['itemsTotal']?.toDouble() ?? 0.0;
+                      final items = List<Map<String, dynamic>>.from(
+                        order['items'] ?? [],
+                      );
+
+                      String formattedDate = 'Unknown';
+                      String deliveryDate = 'Unknown';
+
+                      if (timestamp is Timestamp) {
+                        final orderDate = timestamp.toDate();
+                        formattedDate = DateFormat(
+                          'yyyy-MM-dd',
+                        ).format(orderDate);
+                        deliveryDate = DateFormat(
+                          'yyyy-MM-dd',
+                        ).format(orderDate.add(const Duration(days: 7)));
+                      }
+
+                      return Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        margin: const EdgeInsets.only(bottom: 16),
+                        color: Colors.white,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                "Order ID:",
-                                style: MyTextTheme.lightTextTheme.bodyLarge,
+                              // 🧾 Order ID
+                              Row(
+                                children: [
+                                  const Text(
+                                    "Order ID: ",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: MyColors.primary,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: SelectableText(
+                                      orderId,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                        color: Colors.teal,
+                                      ),
+                                      maxLines: 1,
+                                      showCursor: true,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(width: 6),
-                              Text(
-                                order['orderId'],
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const Spacer(),
-                              Chip(
-                                backgroundColor: order['status'] == 'Delivered'
-                                    ? Colors.green.shade100
-                                    : order['status'] == 'Cancelled'
-                                    ? Colors.red.shade100
-                                    : Colors.orange.shade100,
-                                label: Text(
-                                  order['status'],
-                                  style: TextStyle(
-                                    color: order['status'] == 'Delivered'
-                                        ? Colors.green
-                                        : order['status'] == 'Cancelled'
-                                        ? Colors.red
-                                        : Colors.orange,
-                                    fontWeight: FontWeight.w600,
+                              const SizedBox(height: 8),
+
+                              // 🟠 Status
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Chip(
+                                  labelPadding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                  ),
+                                  backgroundColor: status == 'Delivered'
+                                      ? Colors.green.shade100
+                                      : status == 'Cancelled'
+                                      ? Colors.red.shade100
+                                      : Colors.orange.shade100,
+                                  label: Text(
+                                    status,
+                                    style: TextStyle(
+                                      color: status == 'Delivered'
+                                          ? Colors.green
+                                          : status == 'Cancelled'
+                                          ? Colors.red
+                                          : Colors.orange,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            "Date: ${order['date']}",
-                            style: const TextStyle(color: Colors.grey),
-                          ),
-                          const SizedBox(height: 12),
+                              const SizedBox(height: 8),
 
-                          // Book List
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: List.generate(order['books'].length, (i) {
-                              final book = order['books'][i];
-                              return Text(
-                                "• ${book['title']} x${book['qty']}",
-                                style: const TextStyle(fontSize: 14),
-                              );
-                            }),
-                          ),
+                              // 📆 Dates
+                              Text(
+                                "Order Date: $formattedDate",
+                                style: const TextStyle(color: Colors.teal),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                "Delivery Date: $deliveryDate",
+                                style: const TextStyle(color: Colors.teal),
+                              ),
+                              const SizedBox(height: 12),
 
-                          const SizedBox(height: 12),
-                          Text(
-                            "Total: \$${order['total'].toStringAsFixed(2)}",
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: MyColors.primary,
-                              fontSize: 16,
-                            ),
-                          ),
-
-                          // Cancel Button (only if not delivered/cancelled)
-                          if (order['status'] != 'Delivered' &&
-                              order['status'] != 'Cancelled')
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: TextButton.icon(
-                                onPressed: () => cancelOrder(index),
-                                icon: const Icon(
-                                  Icons.cancel,
-                                  color: Colors.red,
+                              // 📚 Items
+                              if (items.isNotEmpty)
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: items.map((book) {
+                                    return Text(
+                                      "• ${book['title']} x${book['quantity'] ?? 1}",
+                                    );
+                                  }).toList(),
                                 ),
-                                label: const Text(
-                                  "Cancel Order",
-                                  style: TextStyle(color: Colors.red),
+
+                              const SizedBox(height: 12),
+
+                              // 💵 Total
+                              Text(
+                                "Total: \$${total.toStringAsFixed(2)}",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: MyColors.primary,
+                                  fontSize: 16,
                                 ),
                               ),
-                            ),
-                        ],
-                      ),
-                    ),
+
+                              const SizedBox(height: 6),
+
+                              // ❌ Cancel Button
+                              if (status != 'Delivered' &&
+                                  status != 'Cancelled')
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: TextButton.icon(
+                                    onPressed: () => cancelOrder(orderId),
+                                    icon: const Icon(
+                                      Icons.cancel,
+                                      color: Colors.red,
+                                    ),
+                                    label: const Text(
+                                      "Cancel Order",
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
                   );
                 },
               ),

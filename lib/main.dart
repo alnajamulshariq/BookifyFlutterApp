@@ -1,4 +1,3 @@
-
 import 'package:bookify/screens/book_detail_page.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 import 'package:bookify/screens/cart.dart';

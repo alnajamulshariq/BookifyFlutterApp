@@ -1,8 +1,9 @@
-import 'package:bookify/screens/auth/users/sign_in.dart';
+import 'package:bookify/models/cart_item.dart';
+import 'package:bookify/managers/cart_manager.dart';
 import 'package:bookify/screens/home.dart';
 import 'package:bookify/utils/constants/colors.dart';
 import 'package:bookify/utils/themes/custom_themes/app_navbar.dart';
-import 'package:bookify/utils/themes/custom_themes/text_theme.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -15,6 +16,91 @@ class Checkout extends StatefulWidget {
 
 class _CheckoutState extends State<Checkout> {
   final auth = FirebaseAuth.instance;
+  List<CartItem> cartItems = [];
+  double deliveryCharge = 2.0;
+  String userAddress = "Loading address...";
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCart();
+    _loadUserAddress();
+  }
+
+  Future<void> _loadCart() async {
+    CartManager.getCartStream().listen((items) {
+      setState(() {
+        cartItems = items;
+      });
+    });
+  }
+
+  Future<void> _loadUserAddress() async {
+    final uid = auth.currentUser?.uid;
+    if (uid != null) {
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .get();
+      if (doc.exists && doc.data()!.containsKey('address')) {
+        setState(() {
+          userAddress = doc['address'];
+        });
+      } else {
+        setState(() {
+          userAddress = "No address found. Please update your profile.";
+        });
+      }
+    }
+  }
+
+  double get itemsTotal =>
+      cartItems.fold(0.0, (total, item) => total + item.price * item.quantity);
+  double get totalAmount => itemsTotal + deliveryCharge;
+
+  Future<void> _placeOrder() async {
+    final uid = auth.currentUser?.uid;
+    if (uid == null || cartItems.isEmpty) return;
+
+    final orderData = {
+      'userId': uid,
+      'orderDate': Timestamp.now(),
+      'items': cartItems.map((e) => e.toMap()).toList(),
+      'itemsTotal': itemsTotal,
+      'deliveryCharge': deliveryCharge,
+      'totalAmount': totalAmount,
+      'shippingAddress': userAddress,
+    };
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .collection('orders')
+          .add(orderData);
+
+      // Clear cart
+      for (final item in cartItems) {
+        await CartManager.removeFromCart(item.bookId);
+      }
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Order placed successfully!")),
+      );
+
+      Future.delayed(const Duration(seconds: 2), () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Failed to place order: $e")));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,14 +110,12 @@ class _CheckoutState extends State<Checkout> {
         child: Stack(
           children: [
             Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 30),
                 const CustomNavBar(),
-
                 const SizedBox(height: 60),
 
-                // 🔹 Address Container Styled
+                /// 🔹 Dynamic Address Box
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Container(
@@ -47,23 +131,23 @@ class _CheckoutState extends State<Checkout> {
                         ),
                       ],
                     ),
-                    child: const Text(
-                      "House #12, Street 5,\nKarachi, Pakistan",
-                      style: TextStyle(fontSize: 14, color: Colors.black87),
+                    child: Text(
+                      userAddress,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.black87,
+                      ),
                     ),
                   ),
                 ),
 
                 const SizedBox(height: 20),
 
-                // 🔹 Order Summary Styled Box
+                /// 🔹 Order Summary
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 20,
-                      horizontal: 16,
-                    ),
+                    padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
@@ -76,56 +160,21 @@ class _CheckoutState extends State<Checkout> {
                       ],
                     ),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Items Total",
-                              style: TextStyle(color: MyColors.primary),
-                            ),
-                            Text(
-                              "\$39.96",
-                              style: TextStyle(color: Colors.teal),
-                            ),
-                          ],
+                      children: [
+                        _summaryRow(
+                          "Items Total",
+                          "\$${itemsTotal.toStringAsFixed(2)}",
                         ),
-                        SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Delivery Charges",
-                              style: TextStyle(color: MyColors.primary),
-                            ),
-                            Text(
-                              "\$2.00",
-                              style: TextStyle(color: Colors.teal),
-                            ),
-                          ],
+                        const SizedBox(height: 10),
+                        _summaryRow(
+                          "Delivery Charges",
+                          "\$${deliveryCharge.toStringAsFixed(2)}",
                         ),
-                        SizedBox(height: 10),
-                        Divider(thickness: 1),
-                        SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Total",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: MyColors.primary,
-                              ),
-                            ),
-                            Text(
-                              "\$41.96",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.teal,
-                              ),
-                            ),
-                          ],
+                        const Divider(height: 20),
+                        _summaryRow(
+                          "Total",
+                          "\$${totalAmount.toStringAsFixed(2)}",
+                          bold: true,
                         ),
                       ],
                     ),
@@ -136,44 +185,28 @@ class _CheckoutState extends State<Checkout> {
               ],
             ),
 
-            // ✅ Styled Place Order Button
+            /// ✅ Place Order Button
             Positioned(
               bottom: 16,
               left: 24,
               right: 24,
               child: SizedBox(
                 width: double.infinity,
-                child: ElevatedButtonTheme(
-                  data: ElevatedButtonThemeData(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: MyColors.primary,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                child: ElevatedButton(
+                  onPressed: cartItems.isEmpty ? null : _placeOrder,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: MyColors.primary,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Order placed successfully!"),
-                        ),
-                      );
-                      Future.delayed(Duration(seconds: 2), () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomeScreen()),
-                        );
-                      });
-                    },
-                    child: const Text(
-                      "Place Order",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
+                  child: const Text(
+                    "Place Order",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.white,
                     ),
                   ),
                 ),
@@ -182,6 +215,28 @@ class _CheckoutState extends State<Checkout> {
           ],
         ),
       ),
+    );
+  }
+
+  Row _summaryRow(String label, String value, {bool bold = false}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            color: MyColors.primary,
+            fontWeight: bold ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            color: Colors.teal,
+            fontWeight: bold ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+      ],
     );
   }
 }
