@@ -427,7 +427,12 @@ class _ManageOrdersState extends State<ManageOrders> {
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          return const Center(child: Text("Error loading orders."));
+          return const Center(
+            child: Text(
+              "Error loading orders.",
+              style: TextStyle(color: Colors.teal),
+            ),
+          );
         }
         if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
@@ -444,7 +449,9 @@ class _ManageOrdersState extends State<ManageOrders> {
         }).toList();
 
         if (filtered.isEmpty) {
-          return const Center(child: Text("No orders matched."));
+          return const Center(
+            child: Text("No orders yet.", style: TextStyle(color: Colors.teal)),
+          );
         }
 
         return ListView.builder(
