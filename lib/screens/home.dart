@@ -300,138 +300,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
                       SizedBox(height: 20),
-                      // SizedBox(
-                      //   height: 260,
-                      //   child: ListView(
-                      //     scrollDirection: Axis.horizontal,
-                      //     children: const [
-                      //       BookCard(
-                      //         imagePath: 'assets/images/thespidy.jpg',
-                      //         title: 'Sun Tzu – The Art of War',
-                      //         category: 'Strategic, Fantasy',
-                      //         price: 72,
-                      //         rating: 4.4,
-                      //       ),
-                      //       BookCard(
-                      //         imagePath: 'assets/images/thespidy.jpg',
-                      //         title: 'Atomic Habits',
-                      //         category: 'Self Help',
-                      //         price: 58,
-                      //         rating: 4.7,
-                      //       ),
-                      //       BookCard(
-                      //         imagePath: 'assets/images/thespidy.jpg',
-                      //         title: 'Sun Tzu – The Art of War',
-                      //         category: 'Strategic, Fantasy',
-                      //         price: 72,
-                      //         rating: 4.4,
-                      //       ),
-                      //       BookCard(
-                      //         imagePath: 'assets/images/thespidy.jpg',
-                      //         title: 'Atomic Habits',
-                      //         category: 'Self Help',
-                      //         price: 58,
-                      //         rating: 4.7,
-                      //       ),
-                      //       BookCard(
-                      //         imagePath: 'assets/images/thespidy.jpg',
-                      //         title: 'Sun Tzu – The Art of War',
-                      //         category: 'Strategic, Fantasy',
-                      //         price: 72,
-                      //         rating: 4.4,
-                      //       ),
-                      //       BookCard(
-                      //         imagePath: 'assets/images/thespidy.jpg',
-                      //         title: 'Atomic Habits',
-                      //         category: 'Self Help',
-                      //         price: 58,
-                      //         rating: 4.7,
-                      //       ),
-                      //       BookCard(
-                      //         imagePath: 'assets/images/thespidy.jpg',
-                      //         title: 'Sun Tzu – The Art of War',
-                      //         category: 'Strategic, Fantasy',
-                      //         price: 72,
-                      //         rating: 4.4,
-                      //       ),
-                      //       BookCard(
-                      //         imagePath: 'assets/images/thespidy.jpg',
-                      //         title: 'Atomic Habits',
-                      //         category: 'Self Help',
-                      //         price: 58,
-                      //         rating: 4.7,
-                      //       ),
-                      //       BookCard(
-                      //         imagePath: 'assets/images/thespidy.jpg',
-                      //         title: 'Sun Tzu – The Art of War',
-                      //         category: 'Strategic, Fantasy',
-                      //         price: 72,
-                      //         rating: 4.4,
-                      //       ),
-                      //       BookCard(
-                      //         imagePath: 'assets/images/thespidy.jpg',
-                      //         title: 'Atomic Habits',
-                      //         category: 'Self Help',
-                      //         price: 58,
-                      //         rating: 4.7,
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-                      // SizedBox(
-                      //   height: 260,
-                      //   child: FutureBuilder<QuerySnapshot>(
-                      //     future: FirebaseFirestore.instance
-                      //         .collection('books')
-                      //         .where(
-                      //           'is_featured',
-                      //           isEqualTo: true,
-                      //         ) // Fetch only featured books
-                      //         .get(),
-                      //     builder: (context, snapshot) {
-                      //       if (snapshot.connectionState ==
-                      //           ConnectionState.waiting) {
-                      //         return const Center(
-                      //           child: CircularProgressIndicator(),
-                      //         );
-                      //       }
 
-                      //       if (snapshot.hasError) {
-                      //         return Center(
-                      //           child: Text('Error: ${snapshot.error}'),
-                      //         );
-                      //       }
-
-                      //       if (!snapshot.hasData ||
-                      //           snapshot.data!.docs.isEmpty) {
-                      //         return const Center(
-                      //           child: Text('No featured books available.'),
-                      //         );
-                      //       }
-
-                      //       // Map the Firestore data into BookCards
-                      //       List<QueryDocumentSnapshot> books =
-                      //           snapshot.data!.docs;
-                      //       return ListView(
-                      //         scrollDirection: Axis.horizontal,
-                      //         children: books.take(6).map((doc) {
-                      //           // Only take first 6 documents
-                      //           var data = doc.data() as Map<String, dynamic>;
-                      //           String imageUrl =
-                      //               data['cover_image_url'] ??
-                      //               'assets/images/appLogo.png';
-                      //           return BookCard(
-                      //             imagePath: imageUrl,
-                      //             title: data['title'] ?? 'No Title',
-                      //             category: data['genre'] ?? 'No Category',
-                      //             price: data['price'] ?? 0.0,
-                      //             rating: data['rating']?.toDouble() ?? 0.0,
-                      //           );
-                      //         }).toList(),
-                      //       );
-                      //     },
-                      //   ),
-                      // ),
                       SizedBox(
                         height: 260,
                         child: FutureBuilder<QuerySnapshot>(
@@ -517,15 +386,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                         0xFFeeeeee,
                                       ), // ✅ Smooth transition bg
                                       child: BookCard(
-                                        bookId: doc.id,
-                                        imagePath: imageUrl,
-                                        title: data['title'] ?? 'No Title',
+                                        bookId: bookId,
+                                        title: data['title'],
                                         author: data['author'],
-                                        category:
-                                            data['genre'] ?? 'No Category',
-                                        price: data['price']?.toDouble() ?? 0.0,
-                                        rating:
-                                            data['rating']?.toDouble() ?? 0.0,
+                                        imagePath: data['cover_image_url'],
+                                        category: data['genre'],
+                                        price: (data['price'] ?? 0).toDouble(),
+                                        rating: (data['rating'] ?? 0)
+                                            .toDouble(), // ✅ required
                                       ),
                                     ),
                                   ),
@@ -656,15 +524,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                         0xFFeeeeee,
                                       ), // ✅ Smooth transition bg
                                       child: BookCard(
-                                        bookId: doc.id,
-                                        imagePath: imageUrl,
-                                        title: data['title'] ?? 'No Title',
+                                        bookId: bookId,
+                                        title: data['title'],
                                         author: data['author'],
-                                        category:
-                                            data['genre'] ?? 'No Category',
-                                        price: data['price']?.toDouble() ?? 0.0,
-                                        rating:
-                                            data['rating']?.toDouble() ?? 0.0,
+                                        imagePath: data['cover_image_url'],
+                                        category: data['genre'],
+                                        price: (data['price'] ?? 0).toDouble(),
+                                        rating: (data['rating'] ?? 0)
+                                            .toDouble(), // ✅ required
                                       ),
                                     ),
                                   ),
@@ -795,15 +662,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                         0xFFeeeeee,
                                       ), // ✅ Smooth transition bg
                                       child: BookCard(
-                                        bookId: doc.id,
-                                        imagePath: imageUrl,
-                                        title: data['title'] ?? 'No Title',
+                                        bookId: bookId,
+                                        title: data['title'],
                                         author: data['author'],
-                                        category:
-                                            data['genre'] ?? 'No Category',
-                                        price: data['price']?.toDouble() ?? 0.0,
-                                        rating:
-                                            data['rating']?.toDouble() ?? 0.0,
+                                        imagePath: data['cover_image_url'],
+                                        category: data['genre'],
+                                        price: (data['price'] ?? 0).toDouble(),
+                                        rating: (data['rating'] ?? 0)
+                                            .toDouble(), // ✅ required
                                       ),
                                     ),
                                   ),
@@ -933,15 +799,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                         0xFFeeeeee,
                                       ), // ✅ Smooth transition bg
                                       child: BookCard(
-                                        bookId: doc.id,
-                                        imagePath: imageUrl,
-                                        title: data['title'] ?? 'No Title',
+                                        bookId: bookId,
+                                        title: data['title'],
                                         author: data['author'],
-                                        category:
-                                            data['genre'] ?? 'No Category',
-                                        price: data['price']?.toDouble() ?? 0.0,
-                                        rating:
-                                            data['rating']?.toDouble() ?? 0.0,
+                                        imagePath: data['cover_image_url'],
+                                        category: data['genre'],
+                                        price: (data['price'] ?? 0).toDouble(),
+                                        rating: (data['rating'] ?? 0)
+                                            .toDouble(), // ✅ required
                                       ),
                                     ),
                                   ),
