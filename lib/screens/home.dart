@@ -21,8 +21,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // bool _showSearchBar = false;
-  // final TextEditingController _searchController = TextEditingController();
   final user = FirebaseAuth.instance.currentUser;
 
   final List<String> categories = [
@@ -61,45 +59,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   final auth = FirebaseAuth.instance;
-
-  // Dynamic Data from Firestore
-  String name = '';
-  String profileImage = '';
-  bool isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    fetchUserData();
-  }
-
-  Future<void> fetchUserData() async {
-    final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid != null) {
-      try {
-        final doc = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(uid)
-            .get();
-        final data = doc.data();
-
-        if (data != null) {
-          setState(() {
-            name = data['name'] ?? '';
-            // email = data['email'] ?? '';
-            // contact = data['phone'] ?? '';
-            // address = data['address'] ?? '';
-            profileImage = data['profile_image_url'] ?? '';
-          });
-        }
-      } catch (e) {
-        print("Error fetching profile: $e");
-      }
-    }
-    setState(() {
-      isLoading = false;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -184,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ClipRRect(
                                         borderRadius: BorderRadius.circular(8),
                                         child: Image.asset(
-                                          'assets/images/b.jpg',
+                                          'assets/images/d.jpg',
                                           width: 55,
                                           height: 55,
                                           fit: BoxFit.cover,

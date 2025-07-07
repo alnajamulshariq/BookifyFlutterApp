@@ -68,12 +68,12 @@ class FlutterApp extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return SplashScreen();
           } else if (snapshot.hasError) {
-            print("❌ Error during role check: ${snapshot.error}");
+            print("Error during role check: ${snapshot.error}");
             return SplashScreen();
           } else {
             String? role = snapshot.data;
             final user = fb_auth.FirebaseAuth.instance.currentUser;
-            print("👤 Firebase UID: ${user?.uid}");
+            print("Firebase UID: ${user?.uid}");
 
             if (role == "Admin") {
               return const Dashboard();
@@ -92,20 +92,20 @@ class FlutterApp extends StatelessWidget {
     fb_auth.User? user = fb_auth.FirebaseAuth.instance.currentUser;
 
     if (user != null) {
-      print("✅ Logged-in user UID: ${user.uid}");
+      print("Logged-in user UID: ${user.uid}");
       final userDoc = await FirebaseFirestore.instance
           .collection('users')
           .doc(user.uid)
           .get();
 
       if (userDoc.exists) {
-        print("✅ User role: ${userDoc['role']}");
+        print("User role: ${userDoc['role']}");
         return userDoc['role'];
       } else {
-        print("⚠️ User document does not exist");
+        print("User document does not exist");
       }
     } else {
-      print("❌ No user logged in");
+      print("No user logged in");
     }
 
     return null;

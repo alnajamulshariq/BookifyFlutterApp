@@ -1,30 +1,3 @@
-// import '../models/cart_item.dart';
-
-// class CartManager {
-//   static final List<CartItem> _cartItems = [];
-
-//   static List<CartItem> get cartItems => _cartItems;
-
-//   static void addToCart(CartItem item) {
-//     final existing = _cartItems.firstWhere(
-//       (e) => e.title == item.title,
-//       orElse: () => CartItem(title: '', author: '', imageUrl: '', price: 0),
-//     );
-
-//     if (existing.title != '') {
-//       existing.quantity++;
-//     } else {
-//       _cartItems.add(item);
-//     }
-//   }
-
-//   static void removeFromCart(CartItem item) {
-//     _cartItems.remove(item);
-//   }
-// }
-
-
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/cart_item.dart';
@@ -44,9 +17,7 @@ class CartManager {
     final doc = await ref.get();
     if (doc.exists) {
       // update quantity
-      await ref.update({
-        'quantity': FieldValue.increment(1),
-      });
+      await ref.update({'quantity': FieldValue.increment(1)});
     } else {
       await ref.set(item.toMap());
     }
