@@ -15,6 +15,7 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+  final TextEditingController searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,10 +25,10 @@ class _CartScreenState extends State<CartScreen> {
         child: Column(
           children: [
             const SizedBox(height: 30),
-            const CustomNavBar(),
+            CustomNavBar(searchController: searchController),
             const SizedBox(height: 10),
 
-            /// 🔁 Cart Stream from Firestore
+            /// Cart Stream from Firestore
             Expanded(
               child: StreamBuilder<List<CartItem>>(
                 stream: CartManager.getCartStream(),
@@ -36,12 +37,21 @@ class _CartScreenState extends State<CartScreen> {
                     return const Center(child: CircularProgressIndicator());
                   }
 
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        "Error loading cart: ${snapshot.error}",
+                        style: const TextStyle(fontSize: 18, color: Colors.red),
+                      ),
+                    );
+                  }
+
                   final cartItems = snapshot.data ?? [];
 
                   if (cartItems.isEmpty) {
                     return const Center(
                       child: Text(
-                        "No item selected",
+                        "Your cart is empty",
                         style: TextStyle(
                           fontSize: 18,
                           color: Colors.grey,
@@ -63,163 +73,177 @@ class _CartScreenState extends State<CartScreen> {
                           itemBuilder: (context, index) {
                             final item = cartItems[index];
 
-                            return Container(
-                              margin: const EdgeInsets.only(bottom: 20),
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(16),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Colors.teal,
-                                    blurRadius: 4,
-                                    offset: Offset(0, 2),
-                                  ),
-                                ],
+                            return Dismissible(
+                              key: Key(item.bookId),
+                              direction: DismissDirection.endToStart,
+                              background: Container(
+                                alignment: Alignment.centerRight,
+                                padding: const EdgeInsets.only(right: 20),
+                                color: Colors.red,
+                                child: const Icon(
+                                  Icons.delete,
+                                  color: Colors.white,
+                                  size: 30,
+                                ),
                               ),
-                              child: Row(
-                                children: [
-                                  // 🖼 Book Image
-                                  Container(
-                                    width: 80,
-                                    height: 100,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      image: DecorationImage(
-                                        image: NetworkImage(item.imageUrl),
-                                        fit: BoxFit.cover,
+                              onDismissed: (direction) {
+                                CartManager.removeFromCart(
+                                  item.bookId,
+                                  context,
+                                );
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.only(bottom: 20),
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(16),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Colors.teal,
+                                      blurRadius: 4,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  children: [
+                                    // Book Image
+                                    Container(
+                                      width: 80,
+                                      height: 100,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        image: DecorationImage(
+                                          image: NetworkImage(item.imageUrl),
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 20),
+                                    const SizedBox(width: 20),
 
-                                  // 📕 Book Info
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          item.title,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 16,
-                                            color: MyColors.primary,
+                                    // Book Info
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            item.title,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16,
+                                              color: MyColors.primary,
+                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          item.author,
-                                          style: const TextStyle(
-                                            color: Colors.deepOrange,
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            item.author,
+                                            style: const TextStyle(
+                                              color: Colors.deepOrange,
+                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Row(
-                                          children: [
-                                            InkWell(
-                                              onTap: () {
-                                                if (item.quantity > 1) {
+                                          const SizedBox(height: 8),
+                                          Row(
+                                            children: [
+                                              InkWell(
+                                                onTap: () {
                                                   CartManager.updateQuantity(
                                                     item.bookId,
                                                     item.quantity - 1,
+                                                    context,
                                                   );
-                                                }
-                                              },
-                                              child: Container(
-                                                padding: const EdgeInsets.all(
-                                                  4,
-                                                ),
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  color: Colors.teal.shade300,
-                                                ),
-                                                child: const Icon(
-                                                  Icons.remove,
-                                                  size: 18,
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 12,
+                                                },
+                                                child: Container(
+                                                  padding: const EdgeInsets.all(
+                                                    4,
                                                   ),
-                                              child: Text(
-                                                item.quantity.toString(),
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black54,
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: Colors.teal.shade300,
+                                                  ),
+                                                  child: const Icon(
+                                                    Icons.remove,
+                                                    size: 18,
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                            InkWell(
-                                              onTap: () {
-                                                CartManager.updateQuantity(
-                                                  item.bookId,
-                                                  item.quantity + 1,
-                                                );
-                                              },
-                                              child: Container(
-                                                padding: const EdgeInsets.all(
-                                                  4,
-                                                ),
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  color: Colors.teal.shade300,
-                                                ),
-                                                child: const Icon(
-                                                  Icons.add,
-                                                  size: 18,
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 12,
+                                                    ),
+                                                child: Text(
+                                                  item.quantity.toString(),
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black54,
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          ],
+                                              InkWell(
+                                                onTap: () {
+                                                  CartManager.updateQuantity(
+                                                    item.bookId,
+                                                    item.quantity + 1,
+                                                    context,
+                                                  );
+                                                },
+                                                child: Container(
+                                                  padding: const EdgeInsets.all(
+                                                    4,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: Colors.teal.shade300,
+                                                  ),
+                                                  child: const Icon(
+                                                    Icons.add,
+                                                    size: 18,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    // Price + Delete
+                                    Column(
+                                      children: [
+                                        Text(
+                                          "\$${(item.price * item.quantity).toStringAsFixed(2)}",
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.teal,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        InkWell(
+                                          onTap: () {
+                                            CartManager.removeFromCart(
+                                              item.bookId,
+                                              context,
+                                            );
+                                          },
+                                          child: const Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                            size: 22,
+                                          ),
                                         ),
                                       ],
                                     ),
-                                  ),
-
-                                  // 💰 Price + Delete
-                                  Column(
-                                    children: [
-                                      Text(
-                                        "\$${(item.price * item.quantity).toStringAsFixed(2)}",
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.teal,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      InkWell(
-                                        onTap: () {
-                                          CartManager.removeFromCart(
-                                            item.bookId,
-                                          );
-                                          ScaffoldMessenger.of(
-                                            context,
-                                          ).showSnackBar(
-                                            const SnackBar(
-                                              content: Text("Item removed"),
-                                            ),
-                                          );
-                                        },
-                                        child: const Icon(
-                                          Icons.delete,
-                                          color: Colors.red,
-                                          size: 22,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             );
                           },
                         ),
                       ),
 
-                      // ✅ Show Checkout Button when cart is not empty
+                      // Checkout Button
                       Padding(
                         padding: const EdgeInsets.all(12.0),
                         child: SizedBox(

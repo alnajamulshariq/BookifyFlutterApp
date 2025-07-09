@@ -21,6 +21,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final TextEditingController searchController = TextEditingController();
   final user = FirebaseAuth.instance.currentUser;
 
   final List<String> categories = [
@@ -70,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 30),
-            const CustomNavBar(),
+            CustomNavBar(searchController: searchController),
 
             const SizedBox(height: 10),
             Expanded(

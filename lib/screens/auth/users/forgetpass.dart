@@ -27,7 +27,7 @@ class _ForgetPassState extends State<ForgetPass> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// Custom AppBar with top spacing
+              
               Padding(
                 padding: const EdgeInsets.only(bottom: 24.0),
                 child: Row(
@@ -44,7 +44,7 @@ class _ForgetPassState extends State<ForgetPass> {
                         textAlign: TextAlign.center,
                       ),
                     ),
-                    const SizedBox(width: 48), // To balance back button space
+                    const SizedBox(width: 48),
                   ],
                 ),
               ),

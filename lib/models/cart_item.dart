@@ -15,7 +15,7 @@ class CartItem {
     this.quantity = 1,
   });
 
-  // 🔁 Convert CartItem to Map for Firestore
+  // Convert CartItem to Map for Firestore
   Map<String, dynamic> toMap() {
     return {
       'bookId': bookId,
@@ -27,7 +27,7 @@ class CartItem {
     };
   }
 
-  // 🔁 Create CartItem from Firestore Map
+  // Create CartItem from Firestore Map
   factory CartItem.fromMap(Map<String, dynamic> map) {
     return CartItem(
       bookId: map['bookId'],

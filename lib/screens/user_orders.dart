@@ -13,6 +13,7 @@ class UserOrders extends StatefulWidget {
 }
 
 class _UserOrdersState extends State<UserOrders> {
+  final TextEditingController searchController = TextEditingController();
   final FirebaseAuth auth = FirebaseAuth.instance;
 
   Future<void> cancelOrder(String orderId) async {
@@ -45,7 +46,7 @@ class _UserOrdersState extends State<UserOrders> {
         child: Column(
           children: [
             const SizedBox(height: 30),
-            const CustomNavBar(),
+            CustomNavBar(searchController: searchController),
             const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),

@@ -16,6 +16,7 @@ class FeaturedPage extends StatefulWidget {
 }
 
 class _FeaturedPageState extends State<FeaturedPage> {
+  final TextEditingController searchController = TextEditingController();
   final auth = FirebaseAuth.instance;
   String _currentSortField = 'title';
   bool _isDescending = false;
@@ -97,7 +98,7 @@ class _FeaturedPageState extends State<FeaturedPage> {
         child: Column(
           children: [
             const SizedBox(height: 30),
-            const CustomNavBar(),
+            CustomNavBar(searchController: searchController),
             const SizedBox(height: 10),
 
             // Categories List

@@ -16,10 +16,12 @@ class SelfLovePage extends StatefulWidget {
 }
 
 class _SelfLovePageState extends State<SelfLovePage> {
+  final TextEditingController searchController = TextEditingController();
   final auth = FirebaseAuth.instance;
   String _currentSortField = 'title';
   bool _isDescending = false;
   late Stream<QuerySnapshot> _booksStream;
+  String _selectedCategory = 'Self Love'; // Track selected category
 
   final List<String> categories = [
     'Novels',
@@ -36,17 +38,31 @@ class _SelfLovePageState extends State<SelfLovePage> {
   void initState() {
     super.initState();
     _updateStream();
+    _reorderCategories(); // Initialize with Self Love as first category
+  }
+
+  void _reorderCategories() {
+    setState(() {
+      categories.remove(_selectedCategory);
+      categories.insert(0, _selectedCategory);
+    });
   }
 
   void _updateStream() {
     _booksStream = FirebaseFirestore.instance
         .collection('books')
-        .where('genre', isEqualTo: "Self Love")
+        .where('genre', isEqualTo: _selectedCategory)
         .orderBy(_currentSortField, descending: _isDescending)
         .snapshots();
   }
 
   void navigateToCategory(String title) {
+    setState(() {
+      _selectedCategory = title;
+      _reorderCategories();
+      _updateStream();
+    });
+
     final routes = {
       'Novels': '/novels',
       'Self Love': '/self-love',
@@ -57,6 +73,7 @@ class _SelfLovePageState extends State<SelfLovePage> {
       'Poetry': '/poetry',
       'Action': '/action',
     };
+
     if (routes.containsKey(title)) {
       Navigator.pushNamed(context, routes[title]!);
     } else {
@@ -97,7 +114,7 @@ class _SelfLovePageState extends State<SelfLovePage> {
         child: Column(
           children: [
             const SizedBox(height: 30),
-            const CustomNavBar(),
+            CustomNavBar(searchController: searchController),
             const SizedBox(height: 10),
 
             // Categories List
@@ -109,26 +126,47 @@ class _SelfLovePageState extends State<SelfLovePage> {
                   scrollDirection: Axis.horizontal,
                   itemCount: categories.length,
                   itemBuilder: (context, index) {
+                    final category = categories[index];
+                    final isSelected = category == _selectedCategory;
+
                     return Padding(
                       padding: const EdgeInsets.only(right: 10),
                       child: GestureDetector(
-                        onTap: () => navigateToCategory(categories[index]),
+                        onTap: () => navigateToCategory(category),
                         child: Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 16,
                             vertical: 10,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color.fromARGB(129, 178, 223, 219),
+                            color: isSelected
+                                ? Colors
+                                      .teal // Selected color
+                                : const Color.fromARGB(
+                                    129,
+                                    178,
+                                    223,
+                                    219,
+                                  ), // Default color
                             borderRadius: BorderRadius.circular(25),
                             border: Border.all(
-                              color: const Color.fromARGB(129, 178, 223, 219),
+                              color: isSelected
+                                  ? Colors
+                                        .teal // Selected border
+                                  : const Color.fromARGB(
+                                      129,
+                                      178,
+                                      223,
+                                      219,
+                                    ), // Default border
                             ),
                           ),
                           child: Text(
-                            categories[index],
-                            style: const TextStyle(
-                              color: MyColors.primary,
+                            category,
+                            style: TextStyle(
+                              color: isSelected
+                                  ? Colors.white
+                                  : MyColors.primary,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -147,7 +185,7 @@ class _SelfLovePageState extends State<SelfLovePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Self Love",
+                    _selectedCategory, // Dynamic title
                     style: MyTextTheme.lightTextTheme.headlineMedium,
                   ),
                   Theme(
@@ -209,7 +247,7 @@ class _SelfLovePageState extends State<SelfLovePage> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: StreamBuilder<QuerySnapshot>(
-                  stream: _booksStream, // Your Stream<QuerySnapshot>
+                  stream: _booksStream,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
@@ -232,10 +270,10 @@ class _SelfLovePageState extends State<SelfLovePage> {
                     }
 
                     if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                      return const Center(
+                      return Center(
                         child: Text(
-                          'No self love books available.',
-                          style: TextStyle(color: MyColors.primary),
+                          'No $_selectedCategory books available.',
+                          style: const TextStyle(color: MyColors.primary),
                         ),
                       );
                     }
@@ -297,8 +335,7 @@ class _SelfLovePageState extends State<SelfLovePage> {
                                 imagePath: book['cover_image_url'],
                                 category: book['genre'],
                                 price: (book['price'] ?? 0).toDouble(),
-                                rating: (book['rating'] ?? 0)
-                                    .toDouble(), // ✅ REQUIRED!
+                                rating: (book['rating'] ?? 0).toDouble(),
                               ),
                             ),
                           ),
@@ -316,3 +353,5 @@ class _SelfLovePageState extends State<SelfLovePage> {
     );
   }
 }
+
+

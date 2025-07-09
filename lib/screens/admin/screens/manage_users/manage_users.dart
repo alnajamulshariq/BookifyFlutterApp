@@ -111,6 +111,7 @@ class _ManageUsersState extends State<ManageUsers> {
                   padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
                   child: TextField(
                     controller: _searchController,
+                    style: const TextStyle(color: Colors.black),
                     decoration: InputDecoration(
                       hintText: "Search...",
                       prefixIcon: const Icon(Icons.search, color: Colors.grey),
@@ -136,96 +137,97 @@ class _ManageUsersState extends State<ManageUsers> {
               const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.all(12.0),
-                child: Table(
-                  border: TableBorder.all(color: MyColors.primary),
-                  columnWidths: const {
-                    0: FlexColumnWidth(1.2),
-                    1: FlexColumnWidth(2),
-                    2: FlexColumnWidth(3),
-                    3: FlexColumnWidth(2),
-                    4: FlexColumnWidth(2),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: _filteredUsers.length,
+                  itemBuilder: (context, index) {
+                    final user = _filteredUsers[index];
+                    final data = user.data() as Map<String, dynamic>;
+                    final name = data['name'] ?? 'No Name';
+                    final email = data['email'] ?? 'No Email';
+                    final profileImage =
+                        data['profile_image_url'] ??
+                        ''; // Changed from imagePath
+                    final enabled = data['enabled'] ?? true;
+
+                    return Card(
+                      color: Colors.white,
+                      margin: const EdgeInsets.symmetric(vertical: 8.0),
+                      elevation: 5,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Row(
+                          children: [
+                            // Profile image with better error handling
+                            CircleAvatar(
+                              radius: 30,
+                              backgroundColor: Colors.grey[200],
+                              child: profileImage.isNotEmpty
+                                  ? ClipOval(
+                                      child: Image.network(
+                                        profileImage,
+                                        width: 60,
+                                        height: 60,
+                                        fit: BoxFit.cover,
+                                        errorBuilder:
+                                            (context, error, stackTrace) =>
+                                                const Icon(
+                                                  Icons.person,
+                                                  size: 30,
+                                                ),
+                                        loadingBuilder:
+                                            (context, child, loadingProgress) {
+                                              if (loadingProgress == null)
+                                                return child;
+                                              return const SizedBox(
+                                                width: 30,
+                                                height: 30,
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              );
+                                            },
+                                      ),
+                                    )
+                                  : const Icon(Icons.person, size: 30),
+                            ),
+                            const SizedBox(width: 12),
+                            Flexible(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    name,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    email,
+                                    style: TextStyle(color: Colors.teal),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Spacer(),
+                            Switch(
+                              value: enabled,
+                              onChanged: (val) =>
+                                  toggleUserStatus(user.id, val),
+                              activeColor: Colors.teal,
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
                   },
-                  children: [
-                    TableRow(
-                      decoration: const BoxDecoration(color: Colors.teal),
-                      children: [
-                        "ID",
-                        "Name",
-                        "Email",
-                        "Image",
-                        "Action",
-                      ].map((header) => _buildTableHeader(header)).toList(),
-                    ),
-                    for (var user in _filteredUsers) _buildUserRow(user),
-                  ],
                 ),
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  TableRow _buildUserRow(DocumentSnapshot user) {
-    final data = user.data() as Map<String, dynamic>;
-    final name = data['name'] ?? 'No Name';
-    final email = data['email'] ?? 'No Email';
-    final imagePath = data['imagePath'] ?? 'assets/images/b.jpg';
-    final enabled = data['enabled'] ?? true;
-
-    return TableRow(
-      children: [
-        _buildTableCell(user.id),
-        _buildTableCell(name),
-        _buildTableCell(email),
-        TableCell(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Center(
-              child: CircleAvatar(
-                backgroundImage: AssetImage(imagePath),
-                radius: 20,
-              ),
-            ),
-          ),
-        ),
-        TableCell(
-          child: Center(
-            child: Switch(
-              value: enabled,
-              onChanged: (val) => toggleUserStatus(user.id, val),
-              activeColor: Colors.teal,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  TableCell _buildTableHeader(String text) {
-    return TableCell(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Center(
-          child: Text(
-            text,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  TableCell _buildTableCell(String text) {
-    return TableCell(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        child: Center(
-          child: Text(text, style: const TextStyle(color: Colors.teal)),
         ),
       ),
     );

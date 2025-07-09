@@ -14,6 +14,7 @@ class WishListScreen extends StatefulWidget {
 }
 
 class _WishListScreenState extends State<WishListScreen> {
+  final TextEditingController searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +24,7 @@ class _WishListScreenState extends State<WishListScreen> {
         child: Column(
           children: [
             const SizedBox(height: 30),
-            const CustomNavBar(),
+            CustomNavBar(searchController: searchController),
             const SizedBox(height: 10),
             Expanded(
               child: StreamBuilder<List<CartItem>>(

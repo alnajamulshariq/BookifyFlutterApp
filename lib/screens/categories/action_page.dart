@@ -16,10 +16,12 @@ class ActionPage extends StatefulWidget {
 }
 
 class _ActionPageState extends State<ActionPage> {
+  final TextEditingController searchController = TextEditingController();
   final auth = FirebaseAuth.instance;
   String _currentSortField = 'title';
   bool _isDescending = false;
   late Stream<QuerySnapshot> _booksStream;
+  String _selectedCategory = 'Action'; // Track selected category
 
   final List<String> categories = [
     'Novels',
@@ -36,17 +38,32 @@ class _ActionPageState extends State<ActionPage> {
   void initState() {
     super.initState();
     _updateStream();
+    // Move selected category to first position
+    _reorderCategories();
+  }
+
+  void _reorderCategories() {
+    setState(() {
+      categories.remove(_selectedCategory);
+      categories.insert(0, _selectedCategory);
+    });
   }
 
   void _updateStream() {
     _booksStream = FirebaseFirestore.instance
         .collection('books')
-        .where('genre', isEqualTo: "Action")
+        .where('genre', isEqualTo: _selectedCategory)
         .orderBy(_currentSortField, descending: _isDescending)
         .snapshots();
   }
 
   void navigateToCategory(String title) {
+    setState(() {
+      _selectedCategory = title;
+      _reorderCategories();
+      _updateStream();
+    });
+
     final routes = {
       'Novels': '/novels',
       'Self Love': '/self-love',
@@ -57,6 +74,7 @@ class _ActionPageState extends State<ActionPage> {
       'Poetry': '/poetry',
       'Action': '/action',
     };
+
     if (routes.containsKey(title)) {
       Navigator.pushNamed(context, routes[title]!);
     } else {
@@ -97,7 +115,7 @@ class _ActionPageState extends State<ActionPage> {
         child: Column(
           children: [
             const SizedBox(height: 30),
-            const CustomNavBar(),
+            CustomNavBar(searchController: searchController),
             const SizedBox(height: 10),
 
             // Categories List
@@ -109,26 +127,47 @@ class _ActionPageState extends State<ActionPage> {
                   scrollDirection: Axis.horizontal,
                   itemCount: categories.length,
                   itemBuilder: (context, index) {
+                    final category = categories[index];
+                    final isSelected = category == _selectedCategory;
+
                     return Padding(
                       padding: const EdgeInsets.only(right: 10),
                       child: GestureDetector(
-                        onTap: () => navigateToCategory(categories[index]),
+                        onTap: () => navigateToCategory(category),
                         child: Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 16,
                             vertical: 10,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color.fromARGB(129, 178, 223, 219),
+                            color: isSelected
+                                ? Colors
+                                      .teal // Selected color
+                                : const Color.fromARGB(
+                                    129,
+                                    178,
+                                    223,
+                                    219,
+                                  ), // Default color
                             borderRadius: BorderRadius.circular(25),
                             border: Border.all(
-                              color: const Color.fromARGB(129, 178, 223, 219),
+                              color: isSelected
+                                  ? Colors
+                                        .teal // Selected border
+                                  : const Color.fromARGB(
+                                      129,
+                                      178,
+                                      223,
+                                      219,
+                                    ), // Default border
                             ),
                           ),
                           child: Text(
-                            categories[index],
-                            style: const TextStyle(
-                              color: MyColors.primary,
+                            category,
+                            style: TextStyle(
+                              color: isSelected
+                                  ? Colors.white
+                                  : MyColors.primary,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -147,7 +186,7 @@ class _ActionPageState extends State<ActionPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Action",
+                    _selectedCategory, // Dynamic title based on selected category
                     style: MyTextTheme.lightTextTheme.headlineMedium,
                   ),
                   Theme(
@@ -209,7 +248,7 @@ class _ActionPageState extends State<ActionPage> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: StreamBuilder<QuerySnapshot>(
-                  stream: _booksStream, // Your Stream<QuerySnapshot>
+                  stream: _booksStream,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
@@ -232,10 +271,10 @@ class _ActionPageState extends State<ActionPage> {
                     }
 
                     if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                      return const Center(
+                      return Center(
                         child: Text(
-                          'No action books available.',
-                          style: TextStyle(color: MyColors.primary),
+                          'No $_selectedCategory books available.',
+                          style: const TextStyle(color: MyColors.primary),
                         ),
                       );
                     }
@@ -297,8 +336,7 @@ class _ActionPageState extends State<ActionPage> {
                                 imagePath: book['cover_image_url'],
                                 category: book['genre'],
                                 price: (book['price'] ?? 0).toDouble(),
-                                rating: (book['rating'] ?? 0)
-                                    .toDouble(), // ✅ REQUIRED!
+                                rating: (book['rating'] ?? 0).toDouble(),
                               ),
                             ),
                           ),

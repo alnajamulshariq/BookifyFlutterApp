@@ -23,6 +23,7 @@ class CatalogScreen extends StatefulWidget {
 }
 
 class _CatalogScreenState extends State<CatalogScreen> {
+  final TextEditingController searchController = TextEditingController();
   final auth = FirebaseAuth.instance;
 
   final List<Map<String, dynamic>> categories = [
@@ -69,7 +70,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
         child: Column(
           children: [
             const SizedBox(height: 30),
-            const CustomNavBar(),
+            CustomNavBar(searchController: searchController),
             const SizedBox(height: 30),
             Expanded(
               child: SingleChildScrollView(

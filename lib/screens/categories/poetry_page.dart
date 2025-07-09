@@ -16,10 +16,12 @@ class PoetryPage extends StatefulWidget {
 }
 
 class _PoetryPageState extends State<PoetryPage> {
+  final TextEditingController searchController = TextEditingController();
   final auth = FirebaseAuth.instance;
   String _currentSortField = 'title';
   bool _isDescending = false;
   late Stream<QuerySnapshot> _booksStream;
+  String _selectedCategory = 'Poetry'; // Track selected category
 
   final List<String> categories = [
     'Novels',
@@ -36,17 +38,31 @@ class _PoetryPageState extends State<PoetryPage> {
   void initState() {
     super.initState();
     _updateStream();
+    _reorderCategories(); // Initialize with Poetry as first category
+  }
+
+  void _reorderCategories() {
+    setState(() {
+      categories.remove(_selectedCategory);
+      categories.insert(0, _selectedCategory);
+    });
   }
 
   void _updateStream() {
     _booksStream = FirebaseFirestore.instance
         .collection('books')
-        .where('genre', isEqualTo: "Poetry")
+        .where('genre', isEqualTo: _selectedCategory)
         .orderBy(_currentSortField, descending: _isDescending)
         .snapshots();
   }
 
   void navigateToCategory(String title) {
+    setState(() {
+      _selectedCategory = title;
+      _reorderCategories();
+      _updateStream();
+    });
+
     final routes = {
       'Novels': '/novels',
       'Self Love': '/self-love',
@@ -57,6 +73,7 @@ class _PoetryPageState extends State<PoetryPage> {
       'Poetry': '/poetry',
       'Action': '/action',
     };
+    
     if (routes.containsKey(title)) {
       Navigator.pushNamed(context, routes[title]!);
     } else {
@@ -97,7 +114,7 @@ class _PoetryPageState extends State<PoetryPage> {
         child: Column(
           children: [
             const SizedBox(height: 30),
-            const CustomNavBar(),
+            CustomNavBar(searchController: searchController),
             const SizedBox(height: 10),
 
             // Categories List
@@ -109,26 +126,33 @@ class _PoetryPageState extends State<PoetryPage> {
                   scrollDirection: Axis.horizontal,
                   itemCount: categories.length,
                   itemBuilder: (context, index) {
+                    final category = categories[index];
+                    final isSelected = category == _selectedCategory;
+                    
                     return Padding(
                       padding: const EdgeInsets.only(right: 10),
                       child: GestureDetector(
-                        onTap: () => navigateToCategory(categories[index]),
+                        onTap: () => navigateToCategory(category),
                         child: Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 16,
                             vertical: 10,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color.fromARGB(129, 178, 223, 219),
+                            color: isSelected
+                                ? Colors.teal // Selected color
+                                : const Color.fromARGB(129, 178, 223, 219), // Default color
                             borderRadius: BorderRadius.circular(25),
                             border: Border.all(
-                              color: const Color.fromARGB(129, 178, 223, 219),
+                              color: isSelected
+                                  ? Colors.teal // Selected border
+                                  : const Color.fromARGB(129, 178, 223, 219), // Default border
                             ),
                           ),
                           child: Text(
-                            categories[index],
-                            style: const TextStyle(
-                              color: MyColors.primary,
+                            category,
+                            style: TextStyle(
+                              color: isSelected ? Colors.white : MyColors.primary,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -147,7 +171,7 @@ class _PoetryPageState extends State<PoetryPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Poetry",
+                    _selectedCategory, // Dynamic title
                     style: MyTextTheme.lightTextTheme.headlineMedium,
                   ),
                   Theme(
@@ -209,7 +233,7 @@ class _PoetryPageState extends State<PoetryPage> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: StreamBuilder<QuerySnapshot>(
-                  stream: _booksStream, // Your Stream<QuerySnapshot>
+                  stream: _booksStream,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
@@ -232,10 +256,10 @@ class _PoetryPageState extends State<PoetryPage> {
                     }
 
                     if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                      return const Center(
+                      return Center(
                         child: Text(
-                          'No poetry books available.',
-                          style: TextStyle(color: MyColors.primary),
+                          'No $_selectedCategory books available.',
+                          style: const TextStyle(color: MyColors.primary),
                         ),
                       );
                     }
@@ -246,11 +270,11 @@ class _PoetryPageState extends State<PoetryPage> {
                       itemCount: books.length,
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 16,
-                            mainAxisSpacing: 20,
-                            childAspectRatio: 0.63,
-                          ),
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 20,
+                        childAspectRatio: 0.63,
+                      ),
                       itemBuilder: (context, index) {
                         final doc = books[index];
                         final book = doc.data() as Map<String, dynamic>;
@@ -265,24 +289,17 @@ class _PoetryPageState extends State<PoetryPage> {
                                     (context, animation, secondaryAnimation) =>
                                         BookDetailPage(bookId: bookId),
                                 transitionsBuilder:
-                                    (
-                                      context,
-                                      animation,
-                                      secondaryAnimation,
-                                      child,
-                                    ) {
-                                      const begin = Offset(0.0, 1.0);
-                                      const end = Offset.zero;
-                                      const curve = Curves.easeInOut;
-                                      final tween = Tween(
-                                        begin: begin,
-                                        end: end,
-                                      ).chain(CurveTween(curve: curve));
-                                      return SlideTransition(
-                                        position: animation.drive(tween),
-                                        child: child,
-                                      );
-                                    },
+                                    (context, animation, secondaryAnimation, child) {
+                                  const begin = Offset(0.0, 1.0);
+                                  const end = Offset.zero;
+                                  const curve = Curves.easeInOut;
+                                  final tween = Tween(begin: begin, end: end)
+                                      .chain(CurveTween(curve: curve));
+                                  return SlideTransition(
+                                    position: animation.drive(tween),
+                                    child: child,
+                                  );
+                                },
                               ),
                             );
                           },
@@ -297,8 +314,7 @@ class _PoetryPageState extends State<PoetryPage> {
                                 imagePath: book['cover_image_url'],
                                 category: book['genre'],
                                 price: (book['price'] ?? 0).toDouble(),
-                                rating: (book['rating'] ?? 0)
-                                    .toDouble(), // ✅ REQUIRED!
+                                rating: (book['rating'] ?? 0).toDouble(),
                               ),
                             ),
                           ),

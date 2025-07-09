@@ -18,6 +18,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final TextEditingController searchController = TextEditingController();
   final auth = FirebaseAuth.instance;
 
   // Dynamic Data from Firestore
@@ -73,7 +74,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             : Column(
                 children: [
                   const SizedBox(height: 30),
-                  const CustomNavBar(),
+                  CustomNavBar(searchController: searchController),
 
                   const SizedBox(height: 20),
 

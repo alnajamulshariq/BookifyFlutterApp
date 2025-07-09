@@ -17,6 +17,7 @@ class BookDetailPage extends StatefulWidget {
 }
 
 class _BookDetailPageState extends State<BookDetailPage> {
+  final TextEditingController searchController = TextEditingController();
   final auth = FirebaseAuth.instance;
   DocumentSnapshot? bookData;
   double? selectedRating;
@@ -186,7 +187,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
         child: Column(
           children: [
             const SizedBox(height: 30),
-            const CustomNavBar(),
+            CustomNavBar(searchController: searchController),
             const SizedBox(height: 10),
             Expanded(
               child: SingleChildScrollView(

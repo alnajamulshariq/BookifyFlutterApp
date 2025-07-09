@@ -20,6 +20,7 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
+  final TextEditingController searchController = TextEditingController();
   final auth = FirebaseAuth.instance;
   final _storageSupabase = Supabase.instance.client.storage.from("images");
 
@@ -165,7 +166,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           child: Column(
             children: [
               const SizedBox(height: 30),
-              const CustomNavBar(),
+              CustomNavBar(searchController: searchController),
               const SizedBox(height: 10),
 
               Center(

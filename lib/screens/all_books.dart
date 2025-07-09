@@ -16,6 +16,7 @@ class AllBooksPage extends StatefulWidget {
 }
 
 class _AllBooksPageState extends State<AllBooksPage> {
+  final TextEditingController searchController = TextEditingController();
   final auth = FirebaseAuth.instance;
   String _currentSortField = 'title';
   bool _isDescending = false;
@@ -77,8 +78,9 @@ class _AllBooksPageState extends State<AllBooksPage> {
           _isDescending = true;
           break;
         case "Top Rated":
-          _currentSortField = 'rating';
-          _isDescending = true;
+          _currentSortField =
+              'rating'; // Ensure this field exists and is numeric
+          _isDescending = true; // Top rated should be descending
           break;
         default:
           _currentSortField = 'title';
@@ -96,7 +98,7 @@ class _AllBooksPageState extends State<AllBooksPage> {
         child: Column(
           children: [
             const SizedBox(height: 30),
-            const CustomNavBar(),
+            CustomNavBar(searchController: searchController),
             const SizedBox(height: 10),
 
             // Categories List
@@ -166,15 +168,24 @@ class _AllBooksPageState extends State<AllBooksPage> {
                       itemBuilder: (context) => const [
                         PopupMenuItem(
                           value: "Price: Low to High",
-                          child: Text("Price: Low to High"),
+                          child: Text(
+                            "Price: Low to High",
+                            style: TextStyle(color: Colors.teal),
+                          ),
                         ),
                         PopupMenuItem(
                           value: "Price: High to Low",
-                          child: Text("Price: High to Low"),
+                          child: Text(
+                            "Price: High to Low",
+                            style: TextStyle(color: Colors.teal),
+                          ),
                         ),
                         PopupMenuItem(
                           value: "Top Rated",
-                          child: Text("Top Rated"),
+                          child: Text(
+                            "Top Rated",
+                            style: TextStyle(color: Colors.teal),
+                          ),
                         ),
                       ],
                     ),
